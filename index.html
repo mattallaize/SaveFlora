@@ -851,6 +851,20 @@ async function placeOrder(){
       address:document.getElementById('address').value+', '+document.getElementById('zip').value+' '+document.getElementById('city').value,
       items:cart.map(x=>({name:x.name,qty:x.qty,price:x.price})),total};
     orders.unshift(order); localStorage.setItem('sf_orders',JSON.stringify(orders));
+    // Envoyer email confirmation
+    try {
+      await fetch('/api/send-confirmation', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          customer: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
+          email: document.getElementById('email').value,
+          items: cart.map(x => ({name: x.name, qty: x.qty, price: x.price})),
+          total: cart.reduce((s,x) => s + x.price * x.qty, 0),
+          address: document.getElementById('address').value + ', ' + document.getElementById('zip').value + ' ' + document.getElementById('city').value
+        })
+      });
+    } catch(e) { console.log('Email error:', e); }
     cart=[]; updateCartBadge(); showStep(3);
   } finally { btn.textContent='Payer →'; btn.disabled=false; }
 }
