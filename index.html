@@ -301,6 +301,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
   <a href="#" class="nav-logo">SAVEFLORA</a>
   <ul class="nav-links">
     <li><a href="#collections">Collections</a></li>
+    <li><a href="#petitsplus">Petits Plus</a></li>
     <li><a href="#atelier">À propos</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="https://www.instagram.com/saveflora13/" target="_blank" rel="noopener">Instagram</a></li>
@@ -380,6 +381,17 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <a href="#" class="view-all">Voir tout →</a>
   </div>
   <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- PETITS PLUS -->
+<section class="collections" id="petitsplus" style="background:var(--cream);padding:7rem 4rem">
+  <div class="collections-header reveal">
+    <div>
+      <p class="section-label">Cadeaux & surprises</p>
+      <h2 class="collections-title">Les <em>Petits Plus</em></h2>
+    </div>
+  </div>
+  <div class="products-grid" id="extrasGrid"></div>
 </section>
 
 <!-- FEATURE STRIP -->
@@ -658,11 +670,18 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       </div>
       <div class="admin-content">
         <div class="admin-section active" id="adminProducts">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:.8rem">
             <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white">Gérer les produits</div>
-            <button onclick="adminSaveAll()" style="background:var(--gold);color:var(--ink);border:none;padding:.7rem 1.5rem;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-weight:500">💾 Tout sauvegarder</button>
+            <div style="display:flex;gap:.8rem">
+              <button onclick="addNewProduct('fleurs')" style="background:var(--red);color:white;border:none;padding:.7rem 1.2rem;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">+ Fleur</button>
+              <button onclick="addNewProduct('extras')" style="background:#075e54;color:white;border:none;padding:.7rem 1.2rem;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">+ Petit Plus</button>
+              <button onclick="adminSaveAll()" style="background:var(--gold);color:var(--ink);border:none;padding:.7rem 1.5rem;font-family:'Jost',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-weight:500">💾 Tout sauvegarder</button>
+            </div>
           </div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:1rem">🌸 Bouquets & Fleurs</div>
           <div class="admin-product-list" id="adminProductList"></div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin:1.5rem 0 1rem">🎁 Petits Plus</div>
+          <div class="admin-product-list" id="adminExtrasList"></div>
           <div class="admin-success-msg" id="adminSaveMsg">✓ Sauvegardé !</div>
         </div>
         <div class="admin-section" id="adminOrders">
@@ -701,14 +720,26 @@ const SVGS = {
   rose:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><circle cx="150" cy="160" r="55" fill="#C9A84C" opacity="0.4"/><circle cx="150" cy="160" r="38" fill="#E8CC80" opacity="0.65"/><ellipse cx="115" cy="130" rx="28" ry="22" fill="#C9A84C" opacity="0.55" transform="rotate(-20 115 130)"/><ellipse cx="185" cy="130" rx="28" ry="22" fill="#C9A84C" opacity="0.55" transform="rotate(20 185 130)"/><circle cx="150" cy="160" r="22" fill="#FFFFFF" opacity="0.9"/><circle cx="150" cy="160" r="10" fill="#C9A84C"/><line x1="150" y1="215" x2="150" y2="370" stroke="#B01C2E" stroke-width="3"/><path d="M150 300 C130 280 105 278 100 260 C120 265 140 278 150 300Z" fill="#8B0E1E" opacity="0.6"/></svg>`,
   rouge:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FDF9F9;width:100%;height:100%"><ellipse cx="135" cy="135" rx="32" ry="46" fill="#B01C2E" opacity="0.4" transform="rotate(-10 135 135)"/><ellipse cx="168" cy="125" rx="30" ry="44" fill="#D94050" opacity="0.45" transform="rotate(8 168 125)"/><ellipse cx="150" cy="150" rx="38" ry="52" fill="#B01C2E" opacity="0.42"/><circle cx="150" cy="148" r="18" fill="#FFFFFF" opacity="0.7"/><circle cx="150" cy="148" r="8" fill="#C9A84C" opacity="0.9"/><line x1="150" y1="203" x2="145" y2="370" stroke="#8B0E1E" stroke-width="3"/></svg>`,
   pivoine:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><ellipse cx="135" cy="155" rx="40" ry="55" fill="#F5E6D8" opacity="0.75" transform="rotate(-12 135 155)"/><ellipse cx="165" cy="148" rx="40" ry="55" fill="#FAF0E0" opacity="0.7" transform="rotate(10 165 148)"/><ellipse cx="150" cy="160" rx="45" ry="58" fill="#F5EAD5" opacity="0.65"/><circle cx="150" cy="155" r="24" fill="#FFFFFF" opacity="0.9"/><circle cx="150" cy="155" r="12" fill="#C9A84C" opacity="0.85"/><line x1="150" y1="212" x2="152" y2="375" stroke="#B01C2E" stroke-width="3"/></svg>`,
-  dahlia:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><ellipse cx="140" cy="120" rx="28" ry="38" fill="#B01C2E" opacity="0.55" transform="rotate(-15 140 120)"/><ellipse cx="152" cy="155" rx="42" ry="50" fill="#D94050" opacity="0.45"/><ellipse cx="130" cy="162" rx="35" ry="44" fill="#B01C2E" opacity="0.45" transform="rotate(-10 130 162)"/><circle cx="152" cy="155" r="20" fill="#FFFFFF" opacity="0.75"/><circle cx="152" cy="155" r="8" fill="#C9A84C" opacity="0.9"/><line x1="151" y1="208" x2="148" y2="375" stroke="#8B0E1E" stroke-width="3"/></svg>`
+  dahlia:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><ellipse cx="140" cy="120" rx="28" ry="38" fill="#B01C2E" opacity="0.55" transform="rotate(-15 140 120)"/><ellipse cx="152" cy="155" rx="42" ry="50" fill="#D94050" opacity="0.45"/><ellipse cx="130" cy="162" rx="35" ry="44" fill="#B01C2E" opacity="0.45" transform="rotate(-10 130 162)"/><circle cx="152" cy="155" r="20" fill="#FFFFFF" opacity="0.75"/><circle cx="152" cy="155" r="8" fill="#C9A84C" opacity="0.9"/><line x1="151" y1="208" x2="148" y2="375" stroke="#8B0E1E" stroke-width="3"/></svg>`,
+  nounours:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF9F0;width:100%;height:100%"><circle cx="150" cy="200" r="80" fill="#D4956A" opacity="0.9"/><circle cx="110" cy="140" r="40" fill="#D4956A"/><circle cx="190" cy="140" r="40" fill="#D4956A"/><circle cx="110" cy="135" r="25" fill="#E8B48A"/><circle cx="190" cy="135" r="25" fill="#E8B48A"/><circle cx="150" cy="195" r="55" fill="#E8B48A"/><circle cx="130" cy="180" r="12" fill="#1A1010"/><circle cx="170" cy="180" r="12" fill="#1A1010"/><circle cx="133" cy="177" r="4" fill="white"/><circle cx="173" cy="177" r="4" fill="white"/><ellipse cx="150" cy="210" rx="18" ry="12" fill="#C47A50"/><path d="M138 218 Q150 228 162 218" stroke="#1A1010" stroke-width="2" fill="none"/><circle cx="95" cy="270" r="30" fill="#D4956A"/><circle cx="205" cy="270" r="30" fill="#D4956A"/><circle cx="95" cy="270" r="20" fill="#E8B48A"/><circle cx="205" cy="270" r="20" fill="#E8B48A"/></svg>`,
+  ballon:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#F0F5FF;width:100%;height:100%"><ellipse cx="150" cy="160" rx="85" ry="100" fill="#B01C2E" opacity="0.85"/><ellipse cx="120" cy="120" rx="25" ry="35" fill="rgba(255,255,255,0.3)" transform="rotate(-20 120 120)"/><path d="M150 260 L145 280 L155 280 Z" fill="#C9A84C"/><line x1="150" y1="280" x2="150" y2="370" stroke="#C9A84C" stroke-width="2"/><ellipse cx="150" cy="160" rx="85" ry="100" fill="none" stroke="#8B0E1E" stroke-width="2" opacity="0.3"/></svg>`,
+  bonbon:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F8;width:100%;height:100%"><rect x="80" y="150" width="140" height="120" rx="15" fill="#C9A84C" opacity="0.9"/><rect x="90" y="160" width="120" height="100" rx="10" fill="#E8CC80"/><circle cx="120" cy="195" r="18" fill="#B01C2E"/><circle cx="155" cy="195" r="18" fill="#8B0E1E"/><circle cx="135" cy="225" r="18" fill="#C9A84C"/><circle cx="170" cy="225" r="18" fill="#B01C2E"/><path d="M80 165 Q60 140 75 120 Q90 100 110 115" stroke="#B01C2E" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M220 165 Q240 140 225 120 Q210 100 190 115" stroke="#C9A84C" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`,
+  chocolat:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF8F0;width:100%;height:100%"><rect x="60" y="120" width="180" height="200" rx="10" fill="#5C3317"/><rect x="70" y="130" width="160" height="180" rx="8" fill="#7B4A2A"/><line x1="70" y1="190" x2="230" y2="190" stroke="#5C3317" stroke-width="3"/><line x1="70" y1="250" x2="230" y2="250" stroke="#5C3317" stroke-width="3"/><line x1="130" y1="130" x2="130" y2="310" stroke="#5C3317" stroke-width="3"/><line x1="180" y1="130" x2="180" y2="310" stroke="#5C3317" stroke-width="3"/><rect x="65" y="115" width="170" height="15" rx="5" fill="#C9A84C"/><circle cx="100" cy="160" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="155" cy="220" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="200" cy="280" r="8" fill="#C9A84C" opacity="0.6"/></svg>`,
+  carte:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><text x="150" y="152" text-anchor="middle" font-family="serif" font-size="28" fill="#E8CC80">🌹</text><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>`,
+  bougie:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>`
 };
 
 let products = JSON.parse(localStorage.getItem('sf_products')||'null')||[
-  {id:1,name:'Rose Dorée',desc:'Roses champagne & feuillage eucalyptus',price:78,badge:'new',badgeText:'Nouveau',svgKey:'rose',img:null},
-  {id:2,name:'Rouge Passion',desc:'Tulipes rouges & œillets de velours',price:65,badge:'',badgeText:'',svgKey:'rouge',img:null},
-  {id:3,name:'Pivoine Blanche',desc:'Pivoines blanches, gypsophile doré',price:95,badge:'sold',badgeText:'Bestseller',svgKey:'pivoine',img:null},
-  {id:4,name:'Dahlia Carmin',desc:'Dahlias rouges profonds, feuillage sombre',price:88,badge:'',badgeText:'',svgKey:'dahlia',img:null}
+  {id:1,name:'Rose Dorée',desc:'Roses champagne & feuillage eucalyptus',price:78,badge:'new',badgeText:'Nouveau',svgKey:'rose',img:null,category:'fleurs'},
+  {id:2,name:'Rouge Passion',desc:'Tulipes rouges & œillets de velours',price:65,badge:'',badgeText:'',svgKey:'rouge',img:null,category:'fleurs'},
+  {id:3,name:'Pivoine Blanche',desc:'Pivoines blanches, gypsophile doré',price:95,badge:'sold',badgeText:'Bestseller',svgKey:'pivoine',img:null,category:'fleurs'},
+  {id:4,name:'Dahlia Carmin',desc:'Dahlias rouges profonds, feuillage sombre',price:88,badge:'',badgeText:'',svgKey:'dahlia',img:null,category:'fleurs'},
+  {id:5,name:'Nounours Câlin',desc:'Peluche douce & adorable, cadeau parfait',price:25,badge:'new',badgeText:'Nouveau',svgKey:'nounours',img:null,category:'extras'},
+  {id:6,name:'Ballon Festif',desc:'Ballon hélium personnalisable, livré gonflé',price:12,badge:'',badgeText:'',svgKey:'ballon',img:null,category:'extras'},
+  {id:7,name:'Sachet de Bonbons',desc:'Assortiment de bonbons premium, 200g',price:8,badge:'',badgeText:'',svgKey:'bonbon',img:null,category:'extras'},
+  {id:8,name:'Boîte Chocolats',desc:'Chocolats fins artisanaux, boîte de 12',price:22,badge:'',badgeText:'',svgKey:'chocolat',img:null,category:'extras'},
+  {id:9,name:'Carte Message',desc:'Carte personnalisée avec votre message',price:5,badge:'',badgeText:'',svgKey:'carte',img:null,category:'extras'},
+  {id:10,name:'Bougie Parfumée',desc:'Bougie de luxe aux senteurs florales',price:35,badge:'new',badgeText:'Nouveau',svgKey:'bougie',img:null,category:'extras'}
 ];
 let cart=[], orders=JSON.parse(localStorage.getItem('sf_orders')||'[]');
 let adminPwd=localStorage.getItem('sf_admin_pwd')||'saveflora2024';
@@ -723,9 +754,12 @@ function getProductImage(p){
   return SVGS[p.svgKey]||SVGS.rose;
 }
 function renderProducts(){
+  const fleurs=products.filter(p=>p.category!=='extras');
+  const extras=products.filter(p=>p.category==='extras');
   const grid=document.getElementById('productsGrid');
-  grid.innerHTML=products.map((p,i)=>`
-    <div class="product-card reveal reveal-delay-${i+1}">
+  const extrasGrid=document.getElementById('extrasGrid');
+  const makeCard=(p,i)=>`
+    <div class="product-card reveal reveal-delay-${(i%4)+1}">
       <div class="product-image">
         ${getProductImage(p)}
         ${p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}">${p.badgeText}</span>`:''}
@@ -734,7 +768,9 @@ function renderProducts(){
       <div class="product-name">${p.name}</div>
       <div class="product-desc">${p.desc}</div>
       <div class="product-price">${p.price} €</div>
-    </div>`).join('');
+    </div>`;
+  if(grid) grid.innerHTML=fleurs.map((p,i)=>makeCard(p,i)).join('');
+  if(extrasGrid) extrasGrid.innerHTML=extras.map((p,i)=>makeCard(p,i)).join('');
   document.querySelectorAll('.reveal:not(.visible)').forEach(el=>revealObserver.observe(el));
 }
 
@@ -956,24 +992,62 @@ function switchAdminTab(tab){
   const map={products:'adminProducts',orders:'adminOrders',users:'adminUsers',settings:'adminSettings'};
   document.getElementById(map[tab]).classList.add('active');
 }
+function makeAdminRow(p){
+  return `<div class="admin-product-row" id="adminRow${p.id}">
+    <div class="admin-product-thumb" id="adminThumb${p.id}">${getProductImage(p)}</div>
+    <div class="admin-product-info">
+      <input class="admin-product-name-input" id="aName${p.id}" value="${p.name}" placeholder="Nom">
+      <input class="admin-product-desc-input" id="aDesc${p.id}" value="${p.desc}" placeholder="Description">
+      <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;flex-wrap:wrap">
+        <input class="admin-product-price-input" id="aPrice${p.id}" value="${p.price}" type="number" min="0">
+        <span style="font-size:.8rem;color:rgba(255,255,255,.4)">€</span>
+        <input class="admin-product-name-input" id="aBadge${p.id}" value="${p.badgeText}" placeholder="Badge" style="max-width:130px">
+      </div>
+    </div>
+    <div class="admin-product-actions">
+      <label class="admin-img-btn" style="cursor:pointer">📷 Photo<input type="file" accept="image/*" style="display:none" onchange="uploadProductImg(${p.id},this)"></label>
+      <button class="admin-save-row" onclick="saveProduct(${p.id})">💾 Sauver</button>
+      <button onclick="deleteProduct(${p.id})" style="background:rgba(255,0,0,.15);border:1px solid rgba(255,0,0,.3);color:#ff8080;padding:.4rem .8rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif">🗑 Supprimer</button>
+    </div>
+  </div>`;
+}
 function renderAdminProducts(){
-  document.getElementById('adminProductList').innerHTML=products.map(p=>`
-    <div class="admin-product-row">
-      <div class="admin-product-thumb" id="adminThumb${p.id}">${getProductImage(p)}</div>
-      <div class="admin-product-info">
-        <input class="admin-product-name-input" id="aName${p.id}" value="${p.name}" placeholder="Nom">
-        <input class="admin-product-desc-input" id="aDesc${p.id}" value="${p.desc}" placeholder="Description">
-        <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem">
-          <input class="admin-product-price-input" id="aPrice${p.id}" value="${p.price}" type="number" min="0">
-          <span style="font-size:.8rem;color:rgba(255,255,255,.4)">€</span>
-          <input class="admin-product-name-input" id="aBadge${p.id}" value="${p.badgeText}" placeholder="Badge" style="max-width:150px">
-        </div>
-      </div>
-      <div class="admin-product-actions">
-        <label class="admin-img-btn" style="cursor:pointer">📷 Photo<input type="file" accept="image/*" style="display:none" onchange="uploadProductImg(${p.id},this)"></label>
-        <button class="admin-save-row" onclick="saveProduct(${p.id})">💾 Sauver</button>
-      </div>
-    </div>`).join('');
+  const fleurs=products.filter(p=>p.category!=='extras');
+  const extras=products.filter(p=>p.category==='extras');
+  const list=document.getElementById('adminProductList');
+  const extList=document.getElementById('adminExtrasList');
+  if(list) list.innerHTML=fleurs.map(p=>makeAdminRow(p)).join('');
+  if(extList) extList.innerHTML=extras.map(p=>makeAdminRow(p)).join('');
+}
+function addNewProduct(category){
+  const newId=Date.now();
+  const newProduct={
+    id:newId,
+    name:'Nouveau produit',
+    desc:'Description du produit',
+    price:0,
+    badge:'new',
+    badgeText:'Nouveau',
+    svgKey:category==='extras'?'nounours':'rose',
+    img:null,
+    category:category
+  };
+  products.push(newProduct);
+  localStorage.setItem('sf_products',JSON.stringify(products));
+  renderAdminProducts();
+  renderProducts();
+  // Scroller vers le nouveau produit
+  setTimeout(()=>{
+    const el=document.getElementById('adminRow'+newId);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  },100);
+}
+function deleteProduct(id){
+  if(!confirm('Supprimer ce produit ?')) return;
+  products=products.filter(p=>p.id!==id);
+  localStorage.setItem('sf_products',JSON.stringify(products));
+  renderAdminProducts();
+  renderProducts();
 }
 function uploadProductImg(id,input){
   const file=input.files[0]; if(!file) return;
