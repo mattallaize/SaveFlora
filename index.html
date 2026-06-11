@@ -838,35 +838,25 @@ async function placeOrder(){
   const btn=document.querySelector('#step2 .btn-next');
   btn.textContent='Traitement...'; btn.disabled=true;
   try{
+    // Sauvegarder les infos pour l'email après retour Stripe
+    const pendingOrder={
+      customer:document.getElementById('firstName').value+' '+document.getElementById('lastName').value,
+      email:document.getElementById('email').value,
+      phone:document.getElementById('phone').value,
+      address:document.getElementById('address').value+', '+document.getElementById('zip').value+' '+document.getElementById('city').value,
+      items:cart.map(x=>({name:x.name,qty:x.qty,price:x.price})),
+      total:cart.reduce((s,x)=>s+x.price*x.qty,0)
+    };
+    localStorage.setItem('sf_pending_order',JSON.stringify(pendingOrder));
     const response=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:cart})});
     const data=await response.json();
     if(data.url){ window.location.href=data.url; }
     else throw new Error('no url');
   }catch(err){
-    // Fallback local si API pas dispo
-    const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
-    const order={id:'SF'+Date.now(),date:new Date().toLocaleString('fr-FR'),
-      customer:document.getElementById('firstName').value+' '+document.getElementById('lastName').value,
-      email:document.getElementById('email').value,phone:document.getElementById('phone').value,
-      address:document.getElementById('address').value+', '+document.getElementById('zip').value+' '+document.getElementById('city').value,
-      items:cart.map(x=>({name:x.name,qty:x.qty,price:x.price})),total};
-    orders.unshift(order); localStorage.setItem('sf_orders',JSON.stringify(orders));
-    // Envoyer email confirmation
-    try {
-      await fetch('/api/send-confirmation', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          customer: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
-          email: document.getElementById('email').value,
-          items: cart.map(x => ({name: x.name, qty: x.qty, price: x.price})),
-          total: cart.reduce((s,x) => s + x.price * x.qty, 0),
-          address: document.getElementById('address').value + ', ' + document.getElementById('zip').value + ' ' + document.getElementById('city').value
-        })
-      });
-    } catch(e) { console.log('Email error:', e); }
-    cart=[]; updateCartBadge(); showStep(3);
-  } finally { btn.textContent='Payer →'; btn.disabled=false; }
+    console.error(err);
+    alert('Erreur de paiement. Veuillez réessayer.');
+    btn.textContent='Payer →'; btn.disabled=false;
+  }
 }
 function finishOrder(){ closeCheckout(); renderCartItems(); }
 
@@ -1056,6 +1046,20 @@ renderProducts(); renderCartItems(); updateNavUser();
 // Vérifier si retour de Stripe
 if(window.location.search.includes('success=true')){
   cart=[]; updateCartBadge(); renderCartItems();
+  // Envoyer email de confirmation
+  const pendingOrder=JSON.parse(localStorage.getItem('sf_pending_order')||'null');
+  if(pendingOrder){
+    // Sauvegarder commande dans admin
+    const order={id:'SF'+Date.now(),date:new Date().toLocaleString('fr-FR'),...pendingOrder};
+    orders.unshift(order); localStorage.setItem('sf_orders',JSON.stringify(orders));
+    // Envoyer email
+    fetch('/api/send-confirmation',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(pendingOrder)
+    }).catch(e=>console.log('Email error:',e));
+    localStorage.removeItem('sf_pending_order');
+  }
   setTimeout(()=>{
     document.getElementById('checkoutModal').classList.add('open');
     showStep(3);
