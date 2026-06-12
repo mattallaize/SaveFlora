@@ -552,9 +552,10 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <div>
       <div class="footer-col-title">Aide</div>
       <ul class="footer-links">
-        <li><a href="#">Livraison & retours</a></li>
-        <li><a href="#">FAQ</a></li>
         <li><a href="https://wa.me/33676698909" target="_blank">WhatsApp</a></li>
+        <li><a href="/cgv.html">Livraison & CGV</a></li>
+        <li><a href="/mentions-legales.html">Mentions légales</a></li>
+        <li><a href="/confidentialite.html">Confidentialité</a></li>
       </ul>
     </div>
   </div>
@@ -603,6 +604,11 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
           <div class="form-group"><label class="form-label">Code postal</label><input class="form-input" id="zip" placeholder="13001"></div>
           <div class="form-group"><label class="form-label">Ville</label><input class="form-input" id="city" placeholder="Marseille"></div>
         </div>
+        <label style="display:flex;align-items:flex-start;gap:.6rem;font-size:.82rem;color:var(--text-soft);margin-top:1rem;cursor:pointer">
+          <input type="checkbox" id="acceptCGV" style="margin-top:.2rem;width:16px;height:16px;accent-color:var(--red)">
+          <span>J'ai lu et j'accepte les <a href="/cgv.html" target="_blank" style="color:var(--red);text-decoration:underline">conditions générales de vente</a> et la <a href="/confidentialite.html" target="_blank" style="color:var(--red);text-decoration:underline">politique de confidentialité</a>.</span>
+        </label>
+        <div class="auth-error" id="cgvError" style="display:none">Veuillez accepter les CGV pour continuer.</div>
         <div class="modal-actions"><button class="btn-back" onclick="closeCheckout()">Annuler</button><button class="btn-next" onclick="goToStep(2)">Continuer →</button></div>
       </div>
       <div class="checkout-section" id="step2">
@@ -950,6 +956,12 @@ function goToStep(n){
     const f=document.getElementById('firstName').value, l=document.getElementById('lastName').value,
           e=document.getElementById('email').value, a=document.getElementById('address').value;
     if(!f||!l||!e||!a){alert('Veuillez remplir tous les champs obligatoires.');return;}
+    const cgvErr=document.getElementById('cgvError');
+    if(!document.getElementById('acceptCGV').checked){
+      cgvErr.style.display='block';
+      return;
+    }
+    cgvErr.style.display='none';
   }
   showStep(n);
 }
