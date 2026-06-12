@@ -828,7 +828,7 @@ async function loadProductsFromDB(){
     const data=await res.json();
     if(data && Array.isArray(data) && data.length){
       products=data;
-      localStorage.setItem('sf_products',JSON.stringify(products));
+      try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
     } else {
       // Base vide -> on initialise avec les produits par défaut
       await syncProductsToDB();
@@ -1186,7 +1186,7 @@ function addNewProduct(category){
     category:category
   };
   products.push(newProduct);
-  localStorage.setItem('sf_products',JSON.stringify(products));
+  try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
   syncProductsToDB();
   renderAdminProducts();
   renderProducts();
@@ -1199,7 +1199,7 @@ function addNewProduct(category){
 function deleteProduct(id){
   if(!confirm('Supprimer ce produit ?')) return;
   products=products.filter(p=>p.id!==id);
-  localStorage.setItem('sf_products',JSON.stringify(products));
+  try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
   syncProductsToDB();
   renderAdminProducts();
   renderProducts();
@@ -1237,7 +1237,7 @@ function saveProduct(id){
   p.price=parseFloat(document.getElementById('aPrice'+id).value)||p.price;
   p.badgeText=document.getElementById('aBadge'+id).value;
   p.badge=p.badgeText.toLowerCase().includes('nouveau')?'new':(p.badgeText?'sold':'');
-  localStorage.setItem('sf_products',JSON.stringify(products));
+  try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
   renderProducts();
 }
 function adminSaveAll(){
