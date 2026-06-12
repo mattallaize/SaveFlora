@@ -179,9 +179,9 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 .reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}.reveal-delay-4{transition-delay:.4s}
 
 /* WHATSAPP */
-.whatsapp-float { position:fixed; bottom:2rem; right:2rem; z-index:300; width:58px; height:58px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(37,211,102,.4); transition:transform .3s,box-shadow .3s; text-decoration:none; }
-.whatsapp-float:hover { transform:scale(1.1); box-shadow:0 6px 28px rgba(37,211,102,.55); }
-.whatsapp-float svg { width:30px; height:30px; fill:white; }
+.whatsapp-float { position:fixed; bottom:2rem; right:2rem; z-index:300; width:58px; height:58px; background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%); border:2px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(176,28,46,.35); transition:transform .3s,box-shadow .3s; text-decoration:none; }
+.whatsapp-float:hover { transform:scale(1.1); box-shadow:0 6px 28px rgba(176,28,46,.5); }
+.whatsapp-float svg { width:28px; height:28px; fill:var(--gold-light); }
 
 /* CART */
 .cart-overlay { position:fixed; inset:0; background:rgba(26,16,16,.5); z-index:400; opacity:0; pointer-events:none; transition:opacity .3s; backdrop-filter:blur(3px); }
@@ -351,6 +351,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <li><a href="#atelier">À propos</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="https://www.instagram.com/saveflora13/" target="_blank" rel="noopener">Instagram</a></li>
+    <li><a href="https://www.tiktok.com/@saveflora" target="_blank" rel="noopener">TikTok</a></li>
   </ul>
   <div class="nav-right">
     <button class="nav-user-btn" onclick="openAuth()" id="navUserBtn">
@@ -485,17 +486,18 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:1.2rem">SAVEFLORA · Marseille</h3>
       <div style="font-size:.85rem;color:var(--text-soft);line-height:1.8">
         <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Marseille, France</div>
-        <div style="display:flex;gap:.7rem;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Commandes 7j/7</div>
+        <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Commandes 7j/7</div>
+        <div style="display:flex;gap:.7rem;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M4 4h16v16H4z" stroke="none" fill="none"/><path d="M22 6c0 1-10 7-10 7S2 7 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><a href="mailto:saveflora13@gmail.com" style="color:var(--ink);font-weight:500;text-decoration:none;border-bottom:1px solid var(--gold)">saveflora13@gmail.com</a></div>
       </div>
     </div>
-    <div style="background:#075e54;padding:2.5rem;border-top:2px solid #25D366;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="background:var(--red-deep);padding:2.5rem;border-top:2px solid var(--gold);display:flex;flex-direction:column;justify-content:space-between">
       <div>
-        <p style="font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:#25D366;margin-bottom:1.2rem">WhatsApp</p>
+        <p style="font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">WhatsApp</p>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:white;margin-bottom:.8rem">Commandez par WhatsApp</h3>
-        <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#25D366;font-style:italic">+33 6 76 69 89 09</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold-light);font-style:italic">+33 6 76 69 89 09</p>
       </div>
-      <a href="https://wa.me/33676698909" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.7rem;background:#25D366;color:#075e54;padding:.9rem 1.5rem;font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;font-weight:600;margin-top:1.5rem;align-self:flex-start">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#075e54"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.5 2.5C6.529 2.5 2.5 6.529 2.5 11.5c0 1.66.445 3.208 1.219 4.545L2.5 21.5l5.628-1.188A8.979 8.979 0 0011.5 21.5c4.971 0 9-4.029 9-9s-4.029-9-9-9zm0 16.5c-1.43 0-2.768-.367-3.924-1.009l-.281-.167-2.921.617.646-2.863-.185-.296A7.468 7.468 0 014 11.5c0-4.136 3.364-7.5 7.5-7.5S19 7.364 19 11.5s-3.364 7.5-7.5 7.5z"/></svg>
+      <a href="https://wa.me/33676698909" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.7rem;background:var(--gold);color:var(--ink);padding:.9rem 1.5rem;font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;font-weight:600;margin-top:1.5rem;align-self:flex-start">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--ink)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.5 2.5C6.529 2.5 2.5 6.529 2.5 11.5c0 1.66.445 3.208 1.219 4.545L2.5 21.5l5.628-1.188A8.979 8.979 0 0011.5 21.5c4.971 0 9-4.029 9-9s-4.029-9-9-9zm0 16.5c-1.43 0-2.768-.367-3.924-1.009l-.281-.167-2.921.617.646-2.863-.185-.296A7.468 7.468 0 014 11.5c0-4.136 3.364-7.5 7.5-7.5S19 7.364 19 11.5s-3.364 7.5-7.5 7.5z"/></svg>
         Écrire sur WhatsApp
       </a>
     </div>
@@ -505,10 +507,16 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--white);margin-bottom:.8rem">Suivez nos créations</h3>
         <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold-light);font-style:italic">@saveflora13</p>
       </div>
-      <a href="https://www.instagram.com/saveflora13/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.7rem;background:var(--gold);color:var(--ink);padding:.9rem 1.5rem;font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;font-weight:500;margin-top:1.5rem;align-self:flex-start">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        Voir Instagram
-      </a>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem">
+        <a href="https://www.instagram.com/saveflora13/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:var(--ink);padding:.9rem 1.3rem;font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;font-weight:500">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram
+        </a>
+        <a href="https://www.tiktok.com/@saveflora" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.08);border:1px solid var(--gold);color:var(--gold-light);padding:.9rem 1.3rem;font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;font-weight:500">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.28 4.28 0 0 1 13.7 1h-3.45v15.4a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.78.11V10.4a6 6 0 1 0 5.21 5.95V8.66a7.7 7.7 0 0 0 4.45 1.42V6.62a4.28 4.28 0 0 1-1.5-.8z"/></svg>
+          TikTok
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -547,6 +555,8 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
         <li><a href="#atelier">Notre histoire</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="https://www.instagram.com/saveflora13/" target="_blank">Instagram</a></li>
+        <li><a href="https://www.tiktok.com/@saveflora" target="_blank">TikTok</a></li>
+        <li><a href="mailto:saveflora13@gmail.com" style="color:var(--gold-light)">saveflora13@gmail.com</a></li>
       </ul>
     </div>
     <div>
