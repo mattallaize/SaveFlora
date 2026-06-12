@@ -775,7 +775,7 @@ const SVGS = {
   bougie:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>`
 };
 
-let products = JSON.parse(localStorage.getItem('sf_products')||'null')||[
+const DEFAULT_PRODUCTS=[
   {id:1,name:'Rose Dorée',desc:'Roses champagne & feuillage eucalyptus',price:78,badge:'new',badgeText:'Nouveau',svgKey:'rose',img:null,category:'fleurs'},
   {id:2,name:'Rouge Passion',desc:'Tulipes rouges & œillets de velours',price:65,badge:'',badgeText:'',svgKey:'rouge',img:null,category:'fleurs'},
   {id:3,name:'Pivoine Blanche',desc:'Pivoines blanches, gypsophile doré',price:95,badge:'sold',badgeText:'Bestseller',svgKey:'pivoine',img:null,category:'fleurs'},
@@ -787,10 +787,53 @@ let products = JSON.parse(localStorage.getItem('sf_products')||'null')||[
   {id:9,name:'Carte Message',desc:'Carte personnalisée avec votre message',price:5,badge:'',badgeText:'',svgKey:'carte',img:null,category:'extras'},
   {id:10,name:'Bougie Parfumée',desc:'Bougie de luxe aux senteurs florales',price:35,badge:'new',badgeText:'Nouveau',svgKey:'bougie',img:null,category:'extras'}
 ];
+// Démarrage avec les produits par défaut (cache local), remplacés par la base de données dès que possible
+let products = JSON.parse(localStorage.getItem('sf_products')||'null')||JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
 let cart=[], orders=JSON.parse(localStorage.getItem('sf_orders')||'[]');
 let adminPwd=localStorage.getItem('sf_admin_pwd')||'saveflora2024';
 let users=JSON.parse(localStorage.getItem('sf_users')||'[]');
 let currentUser=JSON.parse(localStorage.getItem('sf_current_user')||'null');
+
+// ═══════════════════════════════════
+// BASE DE DONNÉES (Vercel KV) — synchronisation
+// ═══════════════════════════════════
+async function loadProductsFromDB(){
+  try{
+    const res=await fetch('/api/products');
+    const data=await res.json();
+    if(data && Array.isArray(data) && data.length){
+      products=data;
+      localStorage.setItem('sf_products',JSON.stringify(products));
+    } else {
+      // Base vide -> on initialise avec les produits par défaut
+      await syncProductsToDB();
+    }
+  }catch(e){ console.log('DB products load error (utilisation du cache local):',e); }
+}
+async function syncProductsToDB(){
+  try{
+    await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(products)});
+  }catch(e){ console.log('DB products sync error:',e); }
+}
+async function loadOrdersFromDB(){
+  try{
+    const res=await fetch('/api/orders');
+    const data=await res.json();
+    if(Array.isArray(data)) orders=data;
+  }catch(e){ console.log('DB orders load error:',e); }
+}
+async function saveOrderToDB(order){
+  try{
+    await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
+  }catch(e){ console.log('DB order save error:',e); }
+}
+async function loadUsersFromDB(){
+  try{
+    const res=await fetch('/api/users');
+    const data=await res.json();
+    if(Array.isArray(data)) users=data;
+  }catch(e){ console.log('DB users load error:',e); }
+}
 
 // ═══════════════════════════════════
 // PRODUITS
@@ -976,7 +1019,7 @@ function updateNavUser(){
   const lbl=document.getElementById('navUserLabel');
   lbl.textContent=currentUser ? currentUser.firstName : 'Connexion';
 }
-function registerUser(){
+async function registerUser(){
   const fn=document.getElementById('regFirstName').value.trim(),
         ln=document.getElementById('regLastName').value.trim(),
         em=document.getElementById('regEmail').value.trim(),
@@ -991,18 +1034,36 @@ function registerUser(){
   if(!fn||!ln||!em||!pw){err.textContent='Veuillez remplir tous les champs obligatoires.';err.style.display='block';return;}
   if(pw.length<6){err.textContent='Le mot de passe doit contenir au moins 6 caractères.';err.style.display='block';return;}
   if(pw!==pw2){err.textContent='Les mots de passe ne correspondent pas.';err.style.display='block';return;}
-  if(users.find(u=>u.email===em)){err.textContent='Un compte avec cet email existe déjà.';err.style.display='block';return;}
   const user={id:'U'+Date.now(),firstName:fn,lastName:ln,email:em,phone:ph,address:ad,zip:zp,city:ct,pwd:pw,createdAt:new Date().toLocaleString('fr-FR')};
-  users.push(user); localStorage.setItem('sf_users',JSON.stringify(users));
+  try{
+    const res=await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'register',user})});
+    const data=await res.json();
+    if(!res.ok){
+      err.textContent = data.error==='exists' ? 'Un compte avec cet email existe déjà.' : 'Erreur, veuillez réessayer.';
+      err.style.display='block'; return;
+    }
+  }catch(e){
+    // Fallback local si API indisponible
+    if(users.find(u=>u.email===em)){err.textContent='Un compte avec cet email existe déjà.';err.style.display='block';return;}
+    users.push(user); localStorage.setItem('sf_users',JSON.stringify(users));
+  }
   currentUser={...user}; delete currentUser.pwd;
   localStorage.setItem('sf_current_user',JSON.stringify(currentUser));
   ok.textContent='Compte créé avec succès ! Bienvenue chez SAVEFLORA 🌹'; ok.style.display='block';
   setTimeout(()=>{ closeAuth(); updateNavUser(); },1500);
 }
-function loginUser(){
+async function loginUser(){
   const em=document.getElementById('loginEmail').value.trim(), pw=document.getElementById('loginPwd').value;
   const err=document.getElementById('loginError'); err.style.display='none';
-  const user=users.find(u=>u.email===em&&u.pwd===pw);
+  let user=null;
+  try{
+    const res=await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'login',email:em,pwd:pw})});
+    if(res.ok){ const data=await res.json(); user=data.user; }
+  }catch(e){}
+  if(!user){
+    // Fallback local
+    user=users.find(u=>u.email===em&&u.pwd===pw);
+  }
   if(!user){err.style.display='block';return;}
   currentUser={...user}; delete currentUser.pwd;
   localStorage.setItem('sf_current_user',JSON.stringify(currentUser));
@@ -1025,11 +1086,16 @@ function openAdmin(){
   document.getElementById('adminError').style.display='none';
 }
 function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); }
-function checkAdmin(){
+async function checkAdmin(){
   if(document.getElementById('adminPwd').value===adminPwd){
     document.getElementById('adminLogin').style.display='none';
     document.getElementById('adminDashboard').style.display='block';
-    renderAdminProducts(); renderAdminOrders(); renderAdminUsers();
+    renderAdminProducts();
+    renderAdminOrders();
+    renderAdminUsers();
+    // Rafraîchir depuis la base de données
+    await loadOrdersFromDB(); renderAdminOrders();
+    await loadUsersFromDB(); renderAdminUsers();
   } else document.getElementById('adminError').style.display='block';
 }
 function switchAdminTab(tab){
@@ -1080,6 +1146,7 @@ function addNewProduct(category){
   };
   products.push(newProduct);
   localStorage.setItem('sf_products',JSON.stringify(products));
+  syncProductsToDB();
   renderAdminProducts();
   renderProducts();
   // Scroller vers le nouveau produit
@@ -1092,6 +1159,7 @@ function deleteProduct(id){
   if(!confirm('Supprimer ce produit ?')) return;
   products=products.filter(p=>p.id!==id);
   localStorage.setItem('sf_products',JSON.stringify(products));
+  syncProductsToDB();
   renderAdminProducts();
   renderProducts();
 }
@@ -1113,10 +1181,13 @@ function saveProduct(id){
   p.badge=p.badgeText.toLowerCase().includes('nouveau')?'new':(p.badgeText?'sold':'');
   localStorage.setItem('sf_products',JSON.stringify(products));
   renderProducts();
+}
+function adminSaveAll(){
+  products.forEach(p=>saveProduct(p.id));
+  syncProductsToDB();
   const msg=document.getElementById('adminSaveMsg'); msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
 }
-function adminSaveAll(){ products.forEach(p=>saveProduct(p.id)); }
 function renderAdminOrders(){
   const list=document.getElementById('adminOrdersList');
   if(!orders.length){list.innerHTML='<div class="admin-no-orders">Aucune commande pour l\'instant.</div>';return;}
@@ -1162,6 +1233,8 @@ const revealObserver=new IntersectionObserver(entries=>{
 },{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
 renderProducts(); renderCartItems(); updateNavUser();
+// Charger les produits depuis la base de données (synchronisation multi-appareils)
+loadProductsFromDB().then(()=>{ renderProducts(); });
 
 // Vérifier si retour de Stripe
 if(window.location.search.includes('success=true')){
@@ -1169,9 +1242,10 @@ if(window.location.search.includes('success=true')){
   // Envoyer email de confirmation
   const pendingOrder=JSON.parse(localStorage.getItem('sf_pending_order')||'null');
   if(pendingOrder){
-    // Sauvegarder commande dans admin
+    // Sauvegarder commande dans admin (DB + cache local)
     const order={id:'SF'+Date.now(),date:new Date().toLocaleString('fr-FR'),...pendingOrder};
     orders.unshift(order); localStorage.setItem('sf_orders',JSON.stringify(orders));
+    saveOrderToDB(order);
     // Envoyer email
     fetch('/api/send-confirmation',{
       method:'POST',
