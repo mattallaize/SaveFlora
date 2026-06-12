@@ -748,7 +748,9 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
             <div class="admin-field"><label>Instagram</label><input id="settingIG" value="@saveflora13"></div>
             <div class="admin-field"><label>Livraison offerte dès (€)</label><input id="settingFreeShip" value="80" type="number"></div>
             <div class="admin-field full"><label>Texte bannière</label><input id="settingBanner" value="Livraison offerte à Marseille dès 80€ · Bouquets disponibles 7j/7 · Commande avant 14h = livraison le jour même"></div>
-            <div class="admin-field full"><label>Nouveau mot de passe admin</label><input type="password" id="settingPwd" placeholder="Laisser vide pour ne pas changer"></div>
+          </div>
+          <div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);padding:1rem 1.2rem;margin-top:1rem;font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.6">
+            🔐 Le mot de passe admin est maintenant géré de façon sécurisée via les variables d'environnement Vercel (<strong style="color:var(--gold)">ADMIN_PASSWORD</strong>). Pour le changer, va dans Vercel → Settings → Environment Variables.
           </div>
           <button onclick="saveSettings()" style="background:var(--gold);color:var(--ink);border:none;padding:.9rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:1.5rem">💾 Sauvegarder</button>
           <div class="admin-success-msg" id="settingsSaveMsg" style="margin-top:1rem">✓ Paramètres sauvegardés !</div>
@@ -790,7 +792,6 @@ const DEFAULT_PRODUCTS=[
 // Démarrage avec les produits par défaut (cache local), remplacés par la base de données dès que possible
 let products = JSON.parse(localStorage.getItem('sf_products')||'null')||JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
 let cart=[], orders=JSON.parse(localStorage.getItem('sf_orders')||'[]');
-let adminPwd=localStorage.getItem('sf_admin_pwd')||'saveflora2024';
 let users=JSON.parse(localStorage.getItem('sf_users')||'[]');
 let currentUser=JSON.parse(localStorage.getItem('sf_current_user')||'null');
 
@@ -812,12 +813,12 @@ async function loadProductsFromDB(){
 }
 async function syncProductsToDB(){
   try{
-    await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(products)});
+    await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':sessionStorage.getItem('sf_admin_key')||''},body:JSON.stringify(products)});
   }catch(e){ console.log('DB products sync error:',e); }
 }
 async function loadOrdersFromDB(){
   try{
-    const res=await fetch('/api/orders');
+    const res=await fetch('/api/orders',{headers:{'x-admin-key':sessionStorage.getItem('sf_admin_key')||''}});
     const data=await res.json();
     if(Array.isArray(data)) orders=data;
   }catch(e){ console.log('DB orders load error:',e); }
@@ -829,7 +830,7 @@ async function saveOrderToDB(order){
 }
 async function loadUsersFromDB(){
   try{
-    const res=await fetch('/api/users');
+    const res=await fetch('/api/users',{headers:{'x-admin-key':sessionStorage.getItem('sf_admin_key')||''}});
     const data=await res.json();
     if(Array.isArray(data)) users=data;
   }catch(e){ console.log('DB users load error:',e); }
@@ -1085,18 +1086,28 @@ function openAdmin(){
   document.getElementById('adminPwd').value='';
   document.getElementById('adminError').style.display='none';
 }
-function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); }
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('open');
+  sessionStorage.removeItem('sf_admin_key');
+}
 async function checkAdmin(){
-  if(document.getElementById('adminPwd').value===adminPwd){
-    document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminDashboard').style.display='block';
-    renderAdminProducts();
-    renderAdminOrders();
-    renderAdminUsers();
-    // Rafraîchir depuis la base de données
-    await loadOrdersFromDB(); renderAdminOrders();
-    await loadUsersFromDB(); renderAdminUsers();
-  } else document.getElementById('adminError').style.display='block';
+  const pwd=document.getElementById('adminPwd').value;
+  try{
+    const res=await fetch('/api/admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
+    if(!res.ok){ document.getElementById('adminError').style.display='block'; return; }
+  }catch(e){
+    document.getElementById('adminError').style.display='block'; return;
+  }
+  // Connexion réussie : on garde le mot de passe en mémoire de session pour les requêtes admin
+  sessionStorage.setItem('sf_admin_key',pwd);
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminDashboard').style.display='block';
+  renderAdminProducts();
+  renderAdminOrders();
+  renderAdminUsers();
+  // Rafraîchir depuis la base de données
+  await loadOrdersFromDB(); renderAdminOrders();
+  await loadUsersFromDB(); renderAdminUsers();
 }
 function switchAdminTab(tab){
   document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['products','orders','users','settings'][i]===tab));
@@ -1211,8 +1222,6 @@ function renderAdminUsers(){
     </div>`).join('');
 }
 function saveSettings(){
-  const newPwd=document.getElementById('settingPwd').value;
-  if(newPwd){ adminPwd=newPwd; localStorage.setItem('sf_admin_pwd',newPwd); }
   document.getElementById('bannerText').textContent=document.getElementById('settingBanner').value;
   const msg=document.getElementById('settingsSaveMsg'); msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
