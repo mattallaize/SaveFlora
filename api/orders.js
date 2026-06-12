@@ -3,6 +3,9 @@ const { kv } = require('@vercel/kv');
 module.exports = async function handler(req, res) {
   try {
     if (req.method === 'GET') {
+      if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: 'unauthorized' });
+      }
       let orders = await kv.get('orders');
       return res.status(200).json(orders || []);
     }
