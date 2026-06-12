@@ -7,6 +7,9 @@ module.exports = async function handler(req, res) {
       return res.status(200).json(products || null);
     }
     if (req.method === 'POST') {
+      if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: 'unauthorized' });
+      }
       await kv.set('products', req.body);
       return res.status(200).json({ success: true });
     }
