@@ -345,6 +345,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
   .form-row{grid-template-columns:1fr}
   .admin-settings-grid{grid-template-columns:1fr}
   .user-info-grid{grid-template-columns:1fr}
+  #productDetailContent{grid-template-columns:1fr !important}
 }
 </style>
 </head>
@@ -587,6 +588,18 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 <a href="https://wa.me/33676698909" target="_blank" rel="noopener" class="whatsapp-float">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.5 2.5C6.529 2.5 2.5 6.529 2.5 11.5c0 1.66.445 3.208 1.219 4.545L2.5 21.5l5.628-1.188A8.979 8.979 0 0011.5 21.5c4.971 0 9-4.029 9-9s-4.029-9-9-9zm0 16.5c-1.43 0-2.768-.367-3.924-1.009l-.281-.167-2.921.617.646-2.863-.185-.296A7.468 7.468 0 014 11.5c0-4.136 3.364-7.5 7.5-7.5S19 7.364 19 11.5s-3.364 7.5-7.5 7.5z"/></svg>
 </a>
+
+<!-- FICHE PRODUIT -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal" style="max-width:880px">
+    <div class="modal-header"><div class="modal-title">Détail du produit</div><button class="modal-close" onclick="closeProductDetail()">✕</button></div>
+    <div class="modal-body" style="padding:0">
+      <div id="productDetailContent" style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <!-- généré en JS -->
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- CART DRAWER -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
@@ -873,11 +886,11 @@ function renderProducts(){
   const grid=document.getElementById('productsGrid');
   const extrasGrid=document.getElementById('extrasGrid');
   const makeCard=(p,i)=>`
-    <div class="product-card reveal reveal-delay-${(i%4)+1}">
+    <div class="product-card reveal reveal-delay-${(i%4)+1}" onclick="openProductDetail(${p.id})">
       <div class="product-image">
         ${getProductImage(p)}
         ${p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}">${p.badgeText}</span>`:''}
-        <div class="product-overlay"><button class="overlay-btn" onclick="addToCart(${p.id})">Ajouter au panier</button></div>
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(${p.id})">Ajouter au panier</button></div>
       </div>
       <div class="product-name">${p.name}</div>
       <div class="product-desc">${p.desc}</div>
@@ -891,11 +904,45 @@ function renderProducts(){
 // ═══════════════════════════════════
 // CART
 // ═══════════════════════════════════
-function addToCart(id){
+function addToCart(id,qty){
   const p=products.find(x=>x.id===id); if(!p) return;
+  qty=qty||1;
   const ex=cart.find(x=>x.id===id);
-  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  if(ex) ex.qty+=qty; else cart.push({...p,qty:qty});
   updateCartBadge(); renderCartItems(); openCart();
+}
+
+// ═══════════════════════════════════
+// FICHE PRODUIT
+// ═══════════════════════════════════
+function openProductDetail(id){
+  const p=products.find(x=>x.id===id); if(!p) return;
+  const desc = p.longDesc && p.longDesc.trim() ? p.longDesc : p.desc;
+  document.getElementById('productDetailContent').innerHTML = `
+    <div style="background:var(--mist);min-height:380px">${getProductImage(p)}</div>
+    <div style="padding:2.5rem 2.5rem 3rem;display:flex;flex-direction:column">
+      ${p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}" style="position:static;display:inline-block;margin-bottom:1rem;align-self:flex-start">${p.badgeText}</span>`:''}
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:.8rem">${p.name}</h2>
+      <p style="font-size:.92rem;color:var(--text-soft);line-height:1.8;margin-bottom:1.5rem;white-space:pre-line">${desc}</p>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--red);margin-bottom:1.5rem">${p.price} €</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+        <div class="cart-item-qty" style="border:1px solid var(--mist);padding:.4rem .8rem">
+          <button class="qty-btn" onclick="changeDetailQty(-1)">−</button>
+          <span class="qty-num" id="detailQty">1</span>
+          <button class="qty-btn" onclick="changeDetailQty(1)">+</button>
+        </div>
+      </div>
+      <button class="btn-red" onclick="addToCart(${p.id}, parseInt(document.getElementById('detailQty').textContent)); closeProductDetail();" style="width:100%">Ajouter au panier</button>
+      <p style="font-size:.78rem;color:var(--text-soft);margin-top:1.5rem">🚚 Livraison à Marseille · Commande avant 14h = livraison le jour même</p>
+    </div>`;
+  document.getElementById('productModal').classList.add('open');
+}
+function closeProductDetail(){ document.getElementById('productModal').classList.remove('open'); }
+function changeDetailQty(d){
+  const el=document.getElementById('detailQty');
+  let v=parseInt(el.textContent)+d;
+  if(v<1) v=1;
+  el.textContent=v;
 }
 function updateCartBadge(){
   document.getElementById('cartBadge').textContent=cart.reduce((s,x)=>s+x.qty,0);
@@ -1150,7 +1197,8 @@ function makeAdminRow(p){
     <div class="admin-product-thumb" id="adminThumb${p.id}">${getProductImage(p)}</div>
     <div class="admin-product-info">
       <input class="admin-product-name-input" id="aName${p.id}" value="${p.name}" placeholder="Nom">
-      <input class="admin-product-desc-input" id="aDesc${p.id}" value="${p.desc}" placeholder="Description">
+      <input class="admin-product-desc-input" id="aDesc${p.id}" value="${p.desc}" placeholder="Description courte (carte produit)">
+      <textarea class="admin-product-desc-input" id="aLongDesc${p.id}" placeholder="Description détaillée (fiche produit) — optionnel, sinon la description courte est utilisée" rows="2" style="resize:vertical;font-family:'Jost',sans-serif">${p.longDesc||''}</textarea>
       <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;flex-wrap:wrap">
         <input class="admin-product-price-input" id="aPrice${p.id}" value="${p.price}" type="number" min="0">
         <span style="font-size:.8rem;color:rgba(255,255,255,.4)">€</span>
@@ -1234,6 +1282,7 @@ function saveProduct(id){
   const p=products.find(x=>x.id===id); if(!p) return;
   p.name=document.getElementById('aName'+id).value;
   p.desc=document.getElementById('aDesc'+id).value;
+  p.longDesc=document.getElementById('aLongDesc'+id).value;
   p.price=parseFloat(document.getElementById('aPrice'+id).value)||p.price;
   p.badgeText=document.getElementById('aBadge'+id).value;
   p.badge=p.badgeText.toLowerCase().includes('nouveau')?'new':(p.badgeText?'sold':'');
