@@ -1136,7 +1136,7 @@ function renderProducts(){
     if(coffrets.length){
       coffretsGrid.innerHTML=coffrets.map((p,i)=>makeCard(p,i)).join('');
     } else {
-      coffretsGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem 0;color:rgba(255,255,255,.3);font-size:.9rem">Aucun coffret pour l'instant — ajoutez-en depuis l'admin 🎁</div>';
+      coffretsGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:4rem 0;color:rgba(255,255,255,.3);font-size:.9rem">Aucun coffret pour l\'instant</div>';
     }
   }
   document.querySelectorAll('.reveal:not(.visible)').forEach(el=>revealObserver.observe(el));
