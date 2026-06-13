@@ -71,7 +71,7 @@ module.exports = async function handler(req, res) {
         try {
           const resend = new Resend(process.env.RESEND_API_KEY);
           await resend.emails.send({
-            from: 'SAVEFLORA <onboarding@resend.dev>',
+            from: 'SAVEFLORA <commande@saveflora.fr>',
             to: user.email,
             subject: '🔐 Réinitialisation de votre mot de passe SAVEFLORA',
             html: `
