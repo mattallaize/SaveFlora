@@ -436,7 +436,48 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     </div>
     <a href="#" class="view-all">Voir tout →</a>
   </div>
-  <div class="products-grid" id="productsGrid"></div>
+  <div class="products-grid" id="productsGrid">
+    <div class="product-card" onclick="openProductDetail(1)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><circle cx="150" cy="160" r="55" fill="#C9A84C" opacity="0.4"/><circle cx="150" cy="160" r="38" fill="#E8CC80" opacity="0.65"/><ellipse cx="115" cy="130" rx="28" ry="22" fill="#C9A84C" opacity="0.55" transform="rotate(-20 115 130)"/><ellipse cx="185" cy="130" rx="28" ry="22" fill="#C9A84C" opacity="0.55" transform="rotate(20 185 130)"/><circle cx="150" cy="160" r="22" fill="#FFFFFF" opacity="0.9"/><circle cx="150" cy="160" r="10" fill="#C9A84C"/><line x1="150" y1="215" x2="150" y2="370" stroke="#B01C2E" stroke-width="3"/><path d="M150 300 C130 280 105 278 100 260 C120 265 140 278 150 300Z" fill="#8B0E1E" opacity="0.6"/></svg>
+        <span class="product-badge new">Nouveau</span>
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(1)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Rose Dorée</div>
+      <div class="product-desc">Roses champagne & feuillage eucalyptus</div>
+      <div class="product-price">78 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(2)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FDF9F9;width:100%;height:100%"><ellipse cx="135" cy="135" rx="32" ry="46" fill="#B01C2E" opacity="0.4" transform="rotate(-10 135 135)"/><ellipse cx="168" cy="125" rx="30" ry="44" fill="#D94050" opacity="0.45" transform="rotate(8 168 125)"/><ellipse cx="150" cy="150" rx="38" ry="52" fill="#B01C2E" opacity="0.42"/><circle cx="150" cy="148" r="18" fill="#FFFFFF" opacity="0.7"/><circle cx="150" cy="148" r="8" fill="#C9A84C" opacity="0.9"/><line x1="150" y1="203" x2="145" y2="370" stroke="#8B0E1E" stroke-width="3"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(2)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Rouge Passion</div>
+      <div class="product-desc">Tulipes rouges & œillets de velours</div>
+      <div class="product-price">65 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(3)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><ellipse cx="135" cy="155" rx="40" ry="55" fill="#F5E6D8" opacity="0.75" transform="rotate(-12 135 155)"/><ellipse cx="165" cy="148" rx="40" ry="55" fill="#FAF0E0" opacity="0.7" transform="rotate(10 165 148)"/><ellipse cx="150" cy="160" rx="45" ry="58" fill="#F5EAD5" opacity="0.65"/><circle cx="150" cy="155" r="24" fill="#FFFFFF" opacity="0.9"/><circle cx="150" cy="155" r="12" fill="#C9A84C" opacity="0.85"/><line x1="150" y1="212" x2="152" y2="375" stroke="#B01C2E" stroke-width="3"/></svg>
+        <span class="product-badge ">Bestseller</span>
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(3)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Pivoine Blanche</div>
+      <div class="product-desc">Pivoines blanches, gypsophile doré</div>
+      <div class="product-price">95 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(4)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><ellipse cx="140" cy="120" rx="28" ry="38" fill="#B01C2E" opacity="0.55" transform="rotate(-15 140 120)"/><ellipse cx="152" cy="155" rx="42" ry="50" fill="#D94050" opacity="0.45"/><ellipse cx="130" cy="162" rx="35" ry="44" fill="#B01C2E" opacity="0.45" transform="rotate(-10 130 162)"/><circle cx="152" cy="155" r="20" fill="#FFFFFF" opacity="0.75"/><circle cx="152" cy="155" r="8" fill="#C9A84C" opacity="0.9"/><line x1="151" y1="208" x2="148" y2="375" stroke="#8B0E1E" stroke-width="3"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(4)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Dahlia Carmin</div>
+      <div class="product-desc">Dahlias rouges profonds, feuillage sombre</div>
+      <div class="product-price">88 €</div>
+    </div>
+  </div>
 </section>
 
 <!-- PETITS PLUS -->
@@ -447,7 +488,68 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       <h2 class="collections-title">Les <em>Petits Plus</em></h2>
     </div>
   </div>
-  <div class="products-grid" id="extrasGrid"></div>
+  <div class="products-grid" id="extrasGrid">
+    <div class="product-card" onclick="openProductDetail(5)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF9F0;width:100%;height:100%"><circle cx="150" cy="200" r="80" fill="#D4956A" opacity="0.9"/><circle cx="110" cy="140" r="40" fill="#D4956A"/><circle cx="190" cy="140" r="40" fill="#D4956A"/><circle cx="110" cy="135" r="25" fill="#E8B48A"/><circle cx="190" cy="135" r="25" fill="#E8B48A"/><circle cx="150" cy="195" r="55" fill="#E8B48A"/><circle cx="130" cy="180" r="12" fill="#1A1010"/><circle cx="170" cy="180" r="12" fill="#1A1010"/><circle cx="133" cy="177" r="4" fill="white"/><circle cx="173" cy="177" r="4" fill="white"/><ellipse cx="150" cy="210" rx="18" ry="12" fill="#C47A50"/><path d="M138 218 Q150 228 162 218" stroke="#1A1010" stroke-width="2" fill="none"/><circle cx="95" cy="270" r="30" fill="#D4956A"/><circle cx="205" cy="270" r="30" fill="#D4956A"/><circle cx="95" cy="270" r="20" fill="#E8B48A"/><circle cx="205" cy="270" r="20" fill="#E8B48A"/></svg>
+        <span class="product-badge new">Nouveau</span>
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(5)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Nounours Câlin</div>
+      <div class="product-desc">Peluche douce & adorable, cadeau parfait</div>
+      <div class="product-price">25 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(6)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#F0F5FF;width:100%;height:100%"><ellipse cx="150" cy="160" rx="85" ry="100" fill="#B01C2E" opacity="0.85"/><ellipse cx="120" cy="120" rx="25" ry="35" fill="rgba(255,255,255,0.3)" transform="rotate(-20 120 120)"/><path d="M150 260 L145 280 L155 280 Z" fill="#C9A84C"/><line x1="150" y1="280" x2="150" y2="370" stroke="#C9A84C" stroke-width="2"/><ellipse cx="150" cy="160" rx="85" ry="100" fill="none" stroke="#8B0E1E" stroke-width="2" opacity="0.3"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(6)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Ballon Festif</div>
+      <div class="product-desc">Ballon hélium personnalisable, livré gonflé</div>
+      <div class="product-price">12 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(7)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F8;width:100%;height:100%"><rect x="80" y="150" width="140" height="120" rx="15" fill="#C9A84C" opacity="0.9"/><rect x="90" y="160" width="120" height="100" rx="10" fill="#E8CC80"/><circle cx="120" cy="195" r="18" fill="#B01C2E"/><circle cx="155" cy="195" r="18" fill="#8B0E1E"/><circle cx="135" cy="225" r="18" fill="#C9A84C"/><circle cx="170" cy="225" r="18" fill="#B01C2E"/><path d="M80 165 Q60 140 75 120 Q90 100 110 115" stroke="#B01C2E" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M220 165 Q240 140 225 120 Q210 100 190 115" stroke="#C9A84C" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(7)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Sachet de Bonbons</div>
+      <div class="product-desc">Assortiment de bonbons premium, 200g</div>
+      <div class="product-price">8 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(8)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF8F0;width:100%;height:100%"><rect x="60" y="120" width="180" height="200" rx="10" fill="#5C3317"/><rect x="70" y="130" width="160" height="180" rx="8" fill="#7B4A2A"/><line x1="70" y1="190" x2="230" y2="190" stroke="#5C3317" stroke-width="3"/><line x1="70" y1="250" x2="230" y2="250" stroke="#5C3317" stroke-width="3"/><line x1="130" y1="130" x2="130" y2="310" stroke="#5C3317" stroke-width="3"/><line x1="180" y1="130" x2="180" y2="310" stroke="#5C3317" stroke-width="3"/><rect x="65" y="115" width="170" height="15" rx="5" fill="#C9A84C"/><circle cx="100" cy="160" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="155" cy="220" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="200" cy="280" r="8" fill="#C9A84C" opacity="0.6"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(8)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Boîte Chocolats</div>
+      <div class="product-desc">Chocolats fins artisanaux, boîte de 12</div>
+      <div class="product-price">22 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(9)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><text x="150" y="152" text-anchor="middle" font-family="serif" font-size="28" fill="#E8CC80">🌹</text><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>
+        
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(9)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Carte Message</div>
+      <div class="product-desc">Carte personnalisée avec votre message</div>
+      <div class="product-price">5 €</div>
+    </div>
+    <div class="product-card" onclick="openProductDetail(10)">
+      <div class="product-image">
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>
+        <span class="product-badge new">Nouveau</span>
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(10)">Ajouter au panier</button></div>
+      </div>
+      <div class="product-name">Bougie Parfumée</div>
+      <div class="product-desc">Bougie de luxe aux senteurs florales</div>
+      <div class="product-price">35 €</div>
+    </div>
+  </div>
 </section>
 
 <!-- FEATURE STRIP -->
