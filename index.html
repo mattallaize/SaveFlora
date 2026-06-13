@@ -662,9 +662,9 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <p class="newsletter-text">Conseils de saison, nouvelles collections et offres exclusives.</p>
   </div>
   <div class="newsletter-form reveal reveal-delay-1">
-    <input type="email" class="newsletter-input" placeholder="Votre adresse e-mail">
+    <input type="email" class="newsletter-input" id="newsletterEmail" placeholder="Votre adresse e-mail" onkeydown="if(event.key==='Enter')subscribeNewsletter()">
     <button class="btn-primary" style="align-self:flex-start" onclick="subscribeNewsletter()">S'abonner</button>
-    <p class="newsletter-sub">Désabonnement à tout moment.</p>
+    <p class="newsletter-sub" id="newsletterMsg">Désabonnement à tout moment.</p>
   </div>
 </section>
 
@@ -894,6 +894,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
         <button class="admin-tab active" onclick="switchAdminTab('products')">🌸 Produits</button>
         <button class="admin-tab" onclick="switchAdminTab('orders')">📦 Commandes</button>
         <button class="admin-tab" onclick="switchAdminTab('users')">👥 Clients</button>
+        <button class="admin-tab" onclick="switchAdminTab('newsletter')">📧 Newsletter</button>
         <button class="admin-tab" onclick="switchAdminTab('settings')">⚙ Paramètres</button>
       </div>
       <div class="admin-content">
@@ -919,6 +920,10 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
         <div class="admin-section" id="adminUsers">
           <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white;margin-bottom:1.5rem">Clients inscrits</div>
           <div class="admin-users-list" id="adminUsersList"></div>
+        </div>
+        <div class="admin-section" id="adminNewsletter">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white;margin-bottom:1.5rem">Inscrits à la newsletter</div>
+          <div class="admin-users-list" id="adminNewsletterList"></div>
         </div>
         <div class="admin-section" id="adminSettings">
           <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white;margin-bottom:1.5rem">Paramètres</div>
@@ -1016,6 +1021,26 @@ async function loadUsersFromDB(){
     const data=await res.json();
     if(Array.isArray(data)) users=data;
   }catch(e){ console.log('DB users load error:',e); }
+}
+let newsletterSubs=[];
+async function loadNewsletterFromDB(){
+  try{
+    const res=await fetch('/api/newsletter',{headers:{'x-admin-key':sessionStorage.getItem('sf_admin_key')||''}});
+    const data=await res.json();
+    if(Array.isArray(data)) newsletterSubs=data;
+  }catch(e){ console.log('DB newsletter load error:',e); }
+}
+function renderAdminNewsletter(){
+  const list=document.getElementById('adminNewsletterList');
+  if(!newsletterSubs.length){list.innerHTML='<div class="admin-no-orders">Aucun inscrit pour l\'instant.</div>';return;}
+  list.innerHTML=`<div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:1rem">${newsletterSubs.length} inscrit(s)</div>` +
+    newsletterSubs.map(s=>`
+    <div class="admin-user-row">
+      <div class="admin-user-info">
+        <strong style="color:white">${s.email}</strong><br>
+        <span style="color:rgba(255,255,255,.4);font-size:.75rem">Inscrit le ${s.date||''}</span>
+      </div>
+    </div>`).join('');
 }
 
 // ═══════════════════════════════════
@@ -1406,10 +1431,11 @@ async function checkAdmin(){
   await loadUsersFromDB(); renderAdminUsers();
 }
 function switchAdminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['products','orders','users','settings'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['products','orders','users','newsletter','settings'][i]===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
-  const map={products:'adminProducts',orders:'adminOrders',users:'adminUsers',settings:'adminSettings'};
+  const map={products:'adminProducts',orders:'adminOrders',users:'adminUsers',newsletter:'adminNewsletter',settings:'adminSettings'};
   document.getElementById(map[tab]).classList.add('active');
+  if(tab==='newsletter') loadNewsletterFromDB().then(renderAdminNewsletter);
 }
 function makeAdminRow(p){
   return `<div class="admin-product-row" id="adminRow${p.id}">
@@ -1543,10 +1569,29 @@ function saveSettings(){
   const msg=document.getElementById('settingsSaveMsg'); msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
 }
-function subscribeNewsletter(){
-  const input=document.querySelector('.newsletter-input');
-  if(!input.value||!input.value.includes('@')){alert('Veuillez entrer un email valide.');return;}
-  alert('Merci pour votre inscription ! 🌹');input.value='';
+async function subscribeNewsletter(){
+  const input=document.getElementById('newsletterEmail');
+  const msg=document.getElementById('newsletterMsg');
+  const email=input.value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    msg.textContent='Veuillez entrer une adresse email valide.';
+    msg.style.color='var(--gold-light)';
+    return;
+  }
+  try{
+    const res=await fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const data=await res.json();
+    if(data.alreadySubscribed){
+      msg.textContent='Vous êtes déjà inscrit(e) 🌹';
+    } else {
+      msg.textContent='Merci pour votre inscription ! 🌹';
+      input.value='';
+    }
+    msg.style.color='var(--gold-light)';
+  }catch(e){
+    msg.textContent='Erreur, veuillez réessayer.';
+    msg.style.color='var(--gold-light)';
+  }
 }
 
 // ═══════════════════════════════════
