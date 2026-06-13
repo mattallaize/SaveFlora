@@ -682,7 +682,6 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
   </div>
   <div class="footer-bottom">
     <span>© 2024 SAVEFLORA. Tous droits réservés. · Marseille, France</span>
-    <button class="admin-footer-link" onclick="openAdmin()" title="Administration">⚙</button>
   </div>
 </footer>
 
@@ -1340,14 +1339,39 @@ function closeAdmin(){
   sessionStorage.removeItem('sf_admin_key');
 }
 async function checkAdmin(){
+  // Protection anti-bruteforce : blocage après 5 tentatives ratées pendant 5 minutes
+  const LOCK_KEY='sf_admin_lock', ATTEMPTS_KEY='sf_admin_attempts';
+  const lockUntil=parseInt(localStorage.getItem(LOCK_KEY)||'0');
+  const err=document.getElementById('adminError');
+  if(Date.now()<lockUntil){
+    const mins=Math.ceil((lockUntil-Date.now())/60000);
+    err.textContent=`Trop de tentatives. Réessayez dans ${mins} minute(s).`;
+    err.style.display='block';
+    return;
+  }
   const pwd=document.getElementById('adminPwd').value;
   try{
     const res=await fetch('/api/admin-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
-    if(!res.ok){ document.getElementById('adminError').style.display='block'; return; }
+    if(!res.ok){
+      const attempts=(parseInt(localStorage.getItem(ATTEMPTS_KEY)||'0'))+1;
+      localStorage.setItem(ATTEMPTS_KEY,attempts);
+      if(attempts>=5){
+        localStorage.setItem(LOCK_KEY, Date.now()+5*60*1000);
+        localStorage.setItem(ATTEMPTS_KEY,'0');
+        err.textContent='Trop de tentatives. Réessayez dans 5 minutes.';
+      } else {
+        err.textContent='Mot de passe incorrect.';
+      }
+      err.style.display='block';
+      return;
+    }
   }catch(e){
-    document.getElementById('adminError').style.display='block'; return;
+    err.textContent='Mot de passe incorrect.';
+    err.style.display='block'; return;
   }
-  // Connexion réussie : on garde le mot de passe en mémoire de session pour les requêtes admin
+  // Connexion réussie : réinitialiser le compteur, garder le mot de passe en mémoire de session
+  localStorage.removeItem(ATTEMPTS_KEY);
+  localStorage.removeItem(LOCK_KEY);
   sessionStorage.setItem('sf_admin_key',pwd);
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminDashboard').style.display='block';
@@ -1513,8 +1537,13 @@ const revealObserver=new IntersectionObserver(entries=>{
 document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
 renderProducts(); renderCartItems(); updateNavUser();
 
-// Si l'utilisateur arrive via un lien de réinitialisation de mot de passe
+// Accès admin via URL secrète : saveflora.fr/?gestion=fleur2026
 const __urlParams=new URLSearchParams(window.location.search);
+if(__urlParams.get('gestion')==='fleur2026'){
+  openAdmin();
+}
+
+// Si l'utilisateur arrive via un lien de réinitialisation de mot de passe
 if(__urlParams.get('reset') && __urlParams.get('email')){
   document.getElementById('authModal').classList.add('open');
   document.querySelector('.auth-tabs').style.display='none';
