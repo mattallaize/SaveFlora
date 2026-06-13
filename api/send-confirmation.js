@@ -1,14 +1,11 @@
 const { Resend } = require('resend');
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
-
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { customer, email, items, total, address } = req.body;
-
     await resend.emails.send({
-      from: 'SAVEFLORA <onboarding@resend.dev>',
+      from: 'SAVEFLORA <commande@saveflora.fr>',
       to: email,
       subject: '🌹 Confirmation de votre commande SAVEFLORA',
       html: `
@@ -29,9 +26,9 @@ module.exports = async function handler(req, res) {
               <h3 style="color:#C9A84C;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase">Livraison</h3>
               <p style="margin:0">${address}</p>
             </div>
-            <div style="margin-top:2rem;padding:1.5rem;background:#075e54;text-align:center">
+            <div style="margin-top:2rem;padding:1.5rem;background:#8B0E1E;border:1px solid #C9A84C;text-align:center">
               <p style="color:white;margin:0 0 1rem">Des questions ? Contactez-nous sur WhatsApp</p>
-              <a href="https://wa.me/33676698909" style="background:#25D366;color:#075e54;padding:.8rem 1.5rem;text-decoration:none;font-weight:bold;font-size:.9rem">+33 6 76 69 89 09</a>
+              <a href="https://wa.me/33676698909" style="background:#C9A84C;color:#1a1010;padding:.8rem 1.5rem;text-decoration:none;font-weight:bold;font-size:.9rem">+33 6 76 69 89 09</a>
             </div>
           </div>
           <div style="background:#1a1010;padding:1rem;text-align:center">
@@ -40,7 +37,6 @@ module.exports = async function handler(req, res) {
         </div>
       `
     });
-
     res.status(200).json({ success: true });
   } catch (err) {
     console.error(err);
