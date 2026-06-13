@@ -365,6 +365,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
   .admin-settings-grid{grid-template-columns:1fr}
   .user-info-grid{grid-template-columns:1fr}
   #productDetailContent{grid-template-columns:1fr !important}
+  #livraison [style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr !important}
 }
 </style>
 </head>
@@ -457,7 +458,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       <p class="section-label">Sélection du moment</p>
       <h2 class="collections-title">Nos <em>créations</em><br>florales</h2>
     </div>
-    <a href="#" class="view-all">Voir tout →</a>
+    <a href="#collections" class="view-all">Voir tout →</a>
   </div>
   <div class="products-grid" id="productsGrid">
     <div class="product-card" onclick="openProductDetail(1)">
@@ -554,7 +555,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     </div>
     <div class="product-card" onclick="openProductDetail(9)">
       <div class="product-image">
-        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><text x="150" y="152" text-anchor="middle" font-family="serif" font-size="28" fill="#E8CC80">🌹</text><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><circle cx="150" cy="138" r="18" fill="#E8CC80" opacity="0.9"/><circle cx="150" cy="138" r="10" fill="#C9A84C"/><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>
         
         <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(9)">Ajouter au panier</button></div>
       </div>
@@ -579,7 +580,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 <div class="feature-strip">
   <div class="feature-item reveal"><div class="feature-icon">✦</div><div class="feature-title">Fleurs du Jour</div><div class="feature-text">Sélectionnées chaque matin avec soin</div></div>
   <div class="feature-item reveal reveal-delay-1"><div class="feature-icon">◇</div><div class="feature-title">Composition à la Main</div><div class="feature-text">Chaque bouquet créé avec passion</div></div>
-  <div class="feature-item reveal reveal-delay-2"><div class="feature-icon">↺</div><div class="feature-title">Abonnement Floral</div><div class="feature-text">Recevez vos fleurs chaque semaine</div></div>
+  <div class="feature-item reveal reveal-delay-2"><div class="feature-icon">↺</div><div class="feature-title">Livraison Express</div><div class="feature-text">Livraison le jour même avant 14h à Marseille</div></div>
   <div class="feature-item reveal reveal-delay-3"><div class="feature-icon">◈</div><div class="feature-title">Sur Mesure</div><div class="feature-text">Compositions pour vos événements</div></div>
 </div>
 
@@ -619,7 +620,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       <p style="font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem">Notre boutique</p>
       <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;margin-bottom:1.2rem">SAVEFLORA · Marseille</h3>
       <div style="font-size:.85rem;color:var(--text-soft);line-height:1.8">
-        <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Marseille, France</div>
+        <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Marseille, France — Livraison à domicile uniquement</div>
         <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.7rem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Commandes 7j/7</div>
         <div style="display:flex;gap:.7rem;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M4 4h16v16H4z" stroke="none" fill="none"/><path d="M22 6c0 1-10 7-10 7S2 7 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><a href="mailto:saveflora13@gmail.com" style="color:var(--ink);font-weight:500;text-decoration:none;border-bottom:1px solid var(--gold)">saveflora13@gmail.com</a></div>
       </div>
@@ -651,6 +652,40 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
           TikTok
         </a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT CA MARCHE -->
+<section id="livraison" style="padding:5rem 4rem;background:var(--white)">
+  <div style="text-align:center;max-width:800px;margin:0 auto">
+    <p class="section-label" style="justify-content:center">Simple & rapide</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:300;margin-bottom:3rem">Comment ça <em style="font-style:italic;color:var(--red)">marche ?</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
+      <div style="text-align:center;padding:2rem 1.5rem">
+        <div style="font-size:2rem;margin-bottom:1rem">🌸</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.6rem">1. Choisissez</div>
+        <p style="font-size:.85rem;color:var(--text-soft);line-height:1.7">Parcourez nos collections et sélectionnez le bouquet qui vous correspond.</p>
+      </div>
+      <div style="text-align:center;padding:2rem 1.5rem">
+        <div style="font-size:2rem;margin-bottom:1rem">💳</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.6rem">2. Commandez</div>
+        <p style="font-size:.85rem;color:var(--text-soft);line-height:1.7">Payez en ligne en toute sécurité. Commandez avant 14h pour une livraison le jour même.</p>
+      </div>
+      <div style="text-align:center;padding:2rem 1.5rem">
+        <div style="font-size:2rem;margin-bottom:1rem">🚚</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.6rem">3. Recevez</div>
+        <p style="font-size:.85rem;color:var(--text-soft);line-height:1.7">Votre bouquet est préparé à la main et livré à votre domicile à Marseille.</p>
+      </div>
+    </div>
+    <div style="margin-top:2rem;background:var(--cream);padding:1.5rem;border-top:2px solid var(--gold);display:inline-block;text-align:left">
+      <p style="font-size:.85rem;color:var(--ink);line-height:1.8">
+        📍 <strong>Zone de livraison :</strong> Marseille et alentours<br>
+        ⏰ <strong>Avant 14h</strong> → livraison le jour même<br>
+        ⏰ <strong>Après 14h</strong> → livraison le lendemain<br>
+        🎁 <strong>Livraison offerte</strong> dès 80€ d'achat<br>
+        💬 Une question ? <a href="https://wa.me/33676698909" style="color:var(--red)">Contactez-nous sur WhatsApp</a>
+      </p>
     </div>
   </div>
 </section>
@@ -697,6 +732,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
       <div class="footer-col-title">Aide</div>
       <ul class="footer-links">
         <li><a href="https://wa.me/33676698909" target="_blank">WhatsApp</a></li>
+        <li><a href="#livraison">Comment ça marche</a></li>
         <li><a href="/cgv.html">Livraison & CGV</a></li>
         <li><a href="/mentions-legales.html">Mentions légales</a></li>
         <li><a href="/confidentialite.html">Confidentialité</a></li>
@@ -704,7 +740,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2024 SAVEFLORA. Tous droits réservés. · Marseille, France</span>
+    <span>© 2026 SAVEFLORA. Tous droits réservés. · Marseille, France</span>
   </div>
 </footer>
 
@@ -881,6 +917,9 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
         <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:white;text-align:center;margin-bottom:.5rem">Administration</div>
         <div style="font-size:.8rem;color:rgba(255,255,255,.4);text-align:center;margin-bottom:2rem">Accès réservé — mot de passe requis</div>
         <input type="password" class="admin-login-input" id="adminPwd" placeholder="Mot de passe admin" onkeydown="if(event.key==='Enter')checkAdmin()">
+        <label style="display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:1rem;cursor:pointer">
+          <input type="checkbox" id="adminRemember" style="accent-color:var(--gold);width:14px;height:14px"> Se souvenir de moi sur cet appareil
+        </label>
         <button onclick="checkAdmin()" style="width:100%;background:var(--red);color:white;border:none;padding:1rem;font-family:'Jost',sans-serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">Se connecter</button>
         <div id="adminError" style="color:#ff8080;font-size:.8rem;text-align:center;margin-top:.8rem;display:none">Mot de passe incorrect.</div>
       </div>
@@ -888,7 +927,10 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <div id="adminDashboard" style="display:none">
       <div class="admin-header">
         <div class="admin-title">⚙ SAVEFLORA — Tableau de bord</div>
-        <button class="admin-close" onclick="closeAdmin()">✕</button>
+        <div style="display:flex;gap:.8rem;align-items:center">
+          <button onclick="logoutAdmin()" style="background:none;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.6);padding:.4rem .9rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif">🔓 Déconnexion</button>
+          <button class="admin-close" onclick="closeAdmin()">✕</button>
+        </div>
       </div>
       <div class="admin-tabs">
         <button class="admin-tab active" onclick="switchAdminTab('products')">🌸 Produits</button>
@@ -960,7 +1002,7 @@ const SVGS = {
   ballon:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#F0F5FF;width:100%;height:100%"><ellipse cx="150" cy="160" rx="85" ry="100" fill="#B01C2E" opacity="0.85"/><ellipse cx="120" cy="120" rx="25" ry="35" fill="rgba(255,255,255,0.3)" transform="rotate(-20 120 120)"/><path d="M150 260 L145 280 L155 280 Z" fill="#C9A84C"/><line x1="150" y1="280" x2="150" y2="370" stroke="#C9A84C" stroke-width="2"/><ellipse cx="150" cy="160" rx="85" ry="100" fill="none" stroke="#8B0E1E" stroke-width="2" opacity="0.3"/></svg>`,
   bonbon:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F8;width:100%;height:100%"><rect x="80" y="150" width="140" height="120" rx="15" fill="#C9A84C" opacity="0.9"/><rect x="90" y="160" width="120" height="100" rx="10" fill="#E8CC80"/><circle cx="120" cy="195" r="18" fill="#B01C2E"/><circle cx="155" cy="195" r="18" fill="#8B0E1E"/><circle cx="135" cy="225" r="18" fill="#C9A84C"/><circle cx="170" cy="225" r="18" fill="#B01C2E"/><path d="M80 165 Q60 140 75 120 Q90 100 110 115" stroke="#B01C2E" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M220 165 Q240 140 225 120 Q210 100 190 115" stroke="#C9A84C" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`,
   chocolat:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF8F0;width:100%;height:100%"><rect x="60" y="120" width="180" height="200" rx="10" fill="#5C3317"/><rect x="70" y="130" width="160" height="180" rx="8" fill="#7B4A2A"/><line x1="70" y1="190" x2="230" y2="190" stroke="#5C3317" stroke-width="3"/><line x1="70" y1="250" x2="230" y2="250" stroke="#5C3317" stroke-width="3"/><line x1="130" y1="130" x2="130" y2="310" stroke="#5C3317" stroke-width="3"/><line x1="180" y1="130" x2="180" y2="310" stroke="#5C3317" stroke-width="3"/><rect x="65" y="115" width="170" height="15" rx="5" fill="#C9A84C"/><circle cx="100" cy="160" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="155" cy="220" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="200" cy="280" r="8" fill="#C9A84C" opacity="0.6"/></svg>`,
-  carte:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><text x="150" y="152" text-anchor="middle" font-family="serif" font-size="28" fill="#E8CC80">🌹</text><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>`,
+  carte:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><circle cx="150" cy="138" r="18" fill="#E8CC80" opacity="0.9"/><circle cx="150" cy="138" r="10" fill="#C9A84C"/><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>`,
   bougie:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>`
 };
 
@@ -1048,7 +1090,7 @@ function renderAdminNewsletter(){
 // ═══════════════════════════════════
 function getProductImage(p){
   if(p.img) return `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`;
-  return SVGS[p.svgKey]||SVGS.rose;
+  const svg=SVGS[p.svgKey]||SVGS.rose; return svg.replace('<svg ','<svg role="img" aria-label="Illustration '+p.name+'" ');
 }
 function renderProducts(){
   const fleurs=products.filter(p=>p.category!=='extras');
@@ -1103,7 +1145,12 @@ function openProductDetail(id){
         </div>
       </div>
       <button class="btn-red" onclick="addToCart(${p.id}, parseInt(document.getElementById('detailQty').textContent)); closeProductDetail();" style="width:100%">Ajouter au panier</button>
-      <p style="font-size:.78rem;color:var(--text-soft);margin-top:1.5rem">🚚 Livraison à Marseille · Commande avant 14h = livraison le jour même</p>
+      <div style="background:var(--cream);border-left:3px solid var(--gold);padding:.8rem 1rem;margin-top:1.2rem;font-size:.82rem;color:var(--ink)">
+        🚚 <strong>Livraison à Marseille</strong><br>
+        Commandez avant <strong>14h</strong> → livraison le jour même<br>
+        Commandez après 14h → livraison le lendemain<br>
+        <span style="color:var(--text-soft);font-size:.75rem">Livraison offerte dès 80€</span>
+      </div>
     </div>`;
   document.getElementById('productModal').classList.add('open');
 }
@@ -1377,6 +1424,19 @@ function logoutUser(){
 // ═══════════════════════════════════
 function openAdmin(){
   document.getElementById('adminOverlay').classList.add('open');
+  // Si une clé est sauvegardée, on tente la connexion automatique
+  const savedKey = localStorage.getItem('sf_admin_key_saved');
+  if(savedKey){
+    sessionStorage.setItem('sf_admin_key', savedKey);
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminDashboard').style.display='block';
+    renderAdminProducts();
+    renderAdminOrders();
+    renderAdminUsers();
+    loadOrdersFromDB().then(()=>renderAdminOrders());
+    loadUsersFromDB().then(()=>renderAdminUsers());
+    return;
+  }
   document.getElementById('adminLogin').style.display='block';
   document.getElementById('adminDashboard').style.display='none';
   document.getElementById('adminPwd').value='';
@@ -1385,6 +1445,16 @@ function openAdmin(){
 function closeAdmin(){
   document.getElementById('adminOverlay').classList.remove('open');
   sessionStorage.removeItem('sf_admin_key');
+}
+function logoutAdmin(){
+  // Supprime la session ET la clé sauvegardée (déconnexion complète)
+  sessionStorage.removeItem('sf_admin_key');
+  localStorage.removeItem('sf_admin_key_saved');
+  document.getElementById('adminDashboard').style.display='none';
+  document.getElementById('adminLogin').style.display='block';
+  document.getElementById('adminPwd').value='';
+  document.getElementById('adminError').style.display='none';
+  document.getElementById('adminRemember').checked=false;
 }
 async function checkAdmin(){
   // Protection anti-bruteforce : blocage après 5 tentatives ratées pendant 5 minutes
@@ -1417,10 +1487,14 @@ async function checkAdmin(){
     err.textContent='Mot de passe incorrect.';
     err.style.display='block'; return;
   }
-  // Connexion réussie : réinitialiser le compteur, garder le mot de passe en mémoire de session
+  // Connexion réussie : réinitialiser le compteur, garder le mot de passe en mémoire
   localStorage.removeItem(ATTEMPTS_KEY);
   localStorage.removeItem(LOCK_KEY);
   sessionStorage.setItem('sf_admin_key',pwd);
+  // "Se souvenir de moi" → stocker en localStorage (persiste après fermeture)
+  if(document.getElementById('adminRemember').checked){
+    localStorage.setItem('sf_admin_key_saved', pwd);
+  }
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminDashboard').style.display='block';
   renderAdminProducts();
