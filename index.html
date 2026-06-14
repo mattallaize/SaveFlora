@@ -158,6 +158,10 @@ nav.scrolled .nav-user-btn { color:var(--text-soft); }
 .product-image svg,.product-image img { width:100%; height:100%; object-fit:cover; }
 .product-badge { position:absolute; top:1rem; left:1rem; background:var(--red); color:var(--white); font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; padding:.3rem .7rem; }
 .product-badge.new { background:var(--gold); color:var(--ink); }
+.product-badge.outofstock { background:var(--ink); color:rgba(255,255,255,.7); }
+.product-badge.lowstock { background:var(--gold-light); color:var(--ink); }
+.product-card.out-of-stock .product-image{opacity:.55}
+.product-card.out-of-stock .overlay-btn{pointer-events:none;opacity:.5}
 .product-overlay { position:absolute; inset:0; background:rgba(139,14,30,.72); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; }
 .product-card:hover .product-overlay { opacity:1; }
 .overlay-btn { background:var(--white); color:var(--ink); padding:.9rem 1.8rem; font-family:'Jost',sans-serif; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; border:none; cursor:pointer; font-weight:500; transform:translateY(8px); transition:transform .3s,background .2s; }
@@ -1150,17 +1154,24 @@ function renderProducts(){
   const grid=document.getElementById('productsGrid');
   const extrasGrid=document.getElementById('extrasGrid');
   const coffretsGrid=document.getElementById('coffretsGrid');
-  const makeCard=(p,i)=>`
-    <div class="product-card reveal reveal-delay-${(i%4)+1}" onclick="openProductDetail(${p.id})">
+  const makeCard=(p,i)=>{
+    const outOfStock = p.stock!=null && p.stock<=0;
+    const lowStock = p.stock!=null && p.stock>0 && p.stock<=3;
+    let stockBadge='';
+    if(outOfStock) stockBadge=`<span class="product-badge outofstock">Rupture de stock</span>`;
+    else if(lowStock) stockBadge=`<span class="product-badge lowstock">Plus que ${p.stock} en stock</span>`;
+    return `
+    <div class="product-card reveal reveal-delay-${(i%4)+1} ${outOfStock?'out-of-stock':''}" onclick="openProductDetail(${p.id})">
       <div class="product-image">
         ${getProductImage(p)}
-        ${p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}">${p.badgeText}</span>`:''}
-        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(${p.id})">Ajouter au panier</button></div>
+        ${stockBadge || (p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}">${p.badgeText}</span>`:'')}
+        <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(${p.id})" ${outOfStock?'disabled':''}>${outOfStock?'Rupture de stock':'Ajouter au panier'}</button></div>
       </div>
       <div class="product-name">${p.name}</div>
       <div class="product-desc">${p.desc}</div>
       <div class="product-price">${p.price} €</div>
     </div>`;
+  };
   if(grid) grid.innerHTML=fleurs.map((p,i)=>makeCard(p,i)).join('');
   if(extrasGrid) extrasGrid.innerHTML=extras.map((p,i)=>makeCard(p,i)).join('');
   if(coffretsGrid){
@@ -1180,6 +1191,11 @@ function addToCart(id,qty){
   const p=products.find(x=>x.id===id); if(!p) return;
   qty=qty||1;
   const ex=cart.find(x=>x.id===id);
+  const currentQty=ex?ex.qty:0;
+  if(p.stock!=null && (currentQty+qty)>p.stock){
+    alert(p.stock<=0 ? 'Ce produit est en rupture de stock.' : `Stock limité : il ne reste que ${p.stock} exemplaire(s) de "${p.name}".`);
+    return;
+  }
   if(ex) ex.qty+=qty; else cart.push({...p,qty:qty});
   updateCartBadge(); renderCartItems(); openCart();
 }
@@ -1190,21 +1206,26 @@ function addToCart(id,qty){
 function openProductDetail(id){
   const p=products.find(x=>x.id===id); if(!p) return;
   const desc = p.longDesc && p.longDesc.trim() ? p.longDesc : p.desc;
+  const outOfStock = p.stock!=null && p.stock<=0;
+  const lowStock = p.stock!=null && p.stock>0 && p.stock<=3;
+  let stockBadge='';
+  if(outOfStock) stockBadge=`<span class="product-badge outofstock" style="position:static;display:inline-block;margin-bottom:1rem;align-self:flex-start">Rupture de stock</span>`;
+  else if(lowStock) stockBadge=`<span class="product-badge lowstock" style="position:static;display:inline-block;margin-bottom:1rem;align-self:flex-start">Plus que ${p.stock} en stock</span>`;
   document.getElementById('productDetailContent').innerHTML = `
     <div style="background:var(--mist);min-height:380px">${getProductImage(p)}</div>
     <div style="padding:2.5rem 2.5rem 3rem;display:flex;flex-direction:column">
-      ${p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}" style="position:static;display:inline-block;margin-bottom:1rem;align-self:flex-start">${p.badgeText}</span>`:''}
+      ${stockBadge || (p.badgeText?`<span class="product-badge ${p.badge==='new'?'new':''}" style="position:static;display:inline-block;margin-bottom:1rem;align-self:flex-start">${p.badgeText}</span>`:'')}
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:.8rem">${p.name}</h2>
       <p style="font-size:.92rem;color:var(--text-soft);line-height:1.8;margin-bottom:1.5rem;white-space:pre-line">${desc}</p>
       <div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--red);margin-bottom:1.5rem">${p.price} €</div>
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
         <div class="cart-item-qty" style="border:1px solid var(--mist);padding:.4rem .8rem">
-          <button class="qty-btn" onclick="changeDetailQty(-1)">−</button>
-          <span class="qty-num" id="detailQty">1</span>
-          <button class="qty-btn" onclick="changeDetailQty(1)">+</button>
+          <button class="qty-btn" onclick="changeDetailQty(-1)" ${outOfStock?'disabled':''}>−</button>
+          <span class="qty-num" id="detailQty" data-max="${p.stock!=null?p.stock:''}">1</span>
+          <button class="qty-btn" onclick="changeDetailQty(1)" ${outOfStock?'disabled':''}>+</button>
         </div>
       </div>
-      <button class="btn-red" onclick="addToCart(${p.id}, parseInt(document.getElementById('detailQty').textContent)); closeProductDetail();" style="width:100%">Ajouter au panier</button>
+      <button class="btn-red" onclick="addToCart(${p.id}, parseInt(document.getElementById('detailQty').textContent)); closeProductDetail();" style="width:100%" ${outOfStock?'disabled':''}>${outOfStock?'Rupture de stock':'Ajouter au panier'}</button>
       <div style="background:var(--cream);border-left:3px solid var(--gold);padding:.8rem 1rem;margin-top:1.2rem;font-size:.82rem;color:var(--ink)">
         🚚 <strong>Livraison à Marseille</strong><br>
         Commandez avant <strong>14h</strong> → livraison le jour même<br>
@@ -1218,7 +1239,9 @@ function closeProductDetail(){ document.getElementById('productModal').classList
 function changeDetailQty(d){
   const el=document.getElementById('detailQty');
   let v=parseInt(el.textContent)+d;
+  const max=el.getAttribute('data-max');
   if(v<1) v=1;
+  if(max!=='' && v>parseInt(max)) v=parseInt(max);
   el.textContent=v;
 }
 function updateCartBadge(){
@@ -1330,6 +1353,11 @@ async function placeOrder(){
     })});
     const data=await response.json();
     if(data.url){ window.location.href=data.url; }
+    else if(data.error==='out_of_stock'){
+      alert(`Désolé, il ne reste que ${data.available} exemplaire(s) de "${data.product}" en stock. Merci d'ajuster votre panier.`);
+      label.innerHTML=originalLabel; btn.disabled=false;
+      return;
+    }
     else throw new Error('no url');
   }catch(err){
     console.error(err);
@@ -1592,6 +1620,8 @@ function makeAdminRow(p){
         <input class="admin-product-price-input" id="aPrice${p.id}" value="${p.price}" type="number" min="0">
         <span style="font-size:.8rem;color:rgba(255,255,255,.4)">€</span>
         <input class="admin-product-name-input" id="aBadge${p.id}" value="${p.badgeText}" placeholder="Badge" style="max-width:130px">
+        <input class="admin-product-price-input" id="aStock${p.id}" value="${p.stock!=null?p.stock:''}" type="number" min="0" placeholder="Illimité" style="max-width:90px" title="Stock disponible — laisser vide pour illimité">
+        <span style="font-size:.7rem;color:rgba(255,255,255,.35)">stock</span>
       </div>
     </div>
     <div class="admin-product-actions">
@@ -1698,6 +1728,8 @@ function saveProduct(id){
   p.price=parseFloat(document.getElementById('aPrice'+id).value)||p.price;
   p.badgeText=document.getElementById('aBadge'+id).value;
   p.badge=p.badgeText.toLowerCase().includes('nouveau')?'new':(p.badgeText?'sold':'');
+  const stockVal=document.getElementById('aStock'+id).value;
+  p.stock = stockVal==='' ? null : Math.max(0, parseInt(stockVal)||0);
   try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
   renderProducts();
   const btn=document.querySelector(`#adminRow${id} .admin-save-row`);
