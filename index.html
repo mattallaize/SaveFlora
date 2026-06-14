@@ -346,6 +346,11 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 .admin-order-info { font-size:.82rem; color:rgba(255,255,255,.6); line-height:1.6; }
 .admin-order-total { font-size:.9rem; color:var(--gold); margin-top:.5rem; }
 .admin-no-orders { text-align:center; padding:3rem; color:rgba(255,255,255,.3); font-size:.9rem; }
+.order-status-select { font-family:'Jost',sans-serif; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; padding:.4rem .8rem; border:1px solid; cursor:pointer; background:rgba(255,255,255,.05); font-weight:500; }
+.order-status-select.pending { color:#E89B7E; border-color:rgba(193,98,59,.4); }
+.order-status-select.preparing { color:#E8CC80; border-color:rgba(201,168,76,.4); }
+.order-status-select.delivered { color:#A8D8A8; border-color:rgba(110,180,110,.4); }
+.order-status-select option { background:#1A1010; color:white; }
 .admin-settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 .admin-field { display:flex; flex-direction:column; gap:.4rem; }
 .admin-field label { font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.5); }
@@ -1726,15 +1731,41 @@ function adminSaveAll(){
   const msg=document.getElementById('adminSaveMsg'); msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
 }
+const ORDER_STATUS_LABELS={pending:'⏳ En attente',preparing:'🌸 En préparation',delivered:'✅ Livrée'};
 function renderAdminOrders(){
   const list=document.getElementById('adminOrdersList');
   if(!orders.length){list.innerHTML='<div class="admin-no-orders">Aucune commande pour l\'instant.</div>';return;}
-  list.innerHTML=orders.map(o=>`
+  list.innerHTML=orders.map(o=>{
+    const status=o.status||'pending';
+    return `
     <div class="admin-order">
-      <div class="admin-order-header"><span class="admin-order-id">${o.id}</span><span class="admin-order-date">${o.date}</span></div>
+      <div class="admin-order-header">
+        <span class="admin-order-id">${o.id.length>16?o.id.slice(0,16)+'…':o.id}</span>
+        <span class="admin-order-date">${o.date}</span>
+      </div>
       <div class="admin-order-info"><strong style="color:white">${o.customer}</strong> — ${o.email}<br>${o.phone||''} ${o.address}<br>${o.items.map(i=>`${i.name} × ${i.qty}`).join(', ')}</div>
-      <div class="admin-order-total">Total : ${o.total} €</div>
-    </div>`).join('');
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.8rem;flex-wrap:wrap;gap:.8rem">
+        <div class="admin-order-total" style="margin:0">Total : ${o.total} €</div>
+        <select class="order-status-select ${status}" onchange="updateOrderStatus('${o.id}',this.value)">
+          ${Object.entries(ORDER_STATUS_LABELS).map(([val,label])=>`<option value="${val}" ${val===status?'selected':''}>${label}</option>`).join('')}
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function updateOrderStatus(id,status){
+  try{
+    const res=await fetch('/api/orders',{method:'PATCH',headers:{'Content-Type':'application/json','x-admin-key':sessionStorage.getItem('sf_admin_key')||''},body:JSON.stringify({id,status})});
+    if(res.ok){
+      const o=orders.find(x=>x.id===id);
+      if(o) o.status=status;
+      renderAdminOrders();
+    } else {
+      alert('Erreur lors de la mise à jour du statut.');
+    }
+  }catch(e){
+    alert('Erreur réseau.');
+  }
 }
 function renderAdminUsers(){
   const list=document.getElementById('adminUsersList');
