@@ -48,6 +48,28 @@ function emailTemplate(order) {
   `;
 }
 
+function adminNotificationTemplate(order) {
+  return `
+    <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1010">
+      <div style="background:#1A1010;padding:1.5rem 2rem">
+        <h2 style="color:#E8CC80;margin:0;font-size:1.3rem">🌹 Nouvelle commande SAVEFLORA</h2>
+      </div>
+      <div style="padding:1.5rem 2rem;background:#FFF5F5">
+        <p style="font-size:1.1rem;margin:0 0 1rem"><strong>${order.total.toFixed(2)} €</strong> — ${order.customer || 'Client'}</p>
+        <table style="width:100%;font-size:.9rem;border-collapse:collapse">
+          <tr><td style="padding:.3rem 0;color:#7A5A5A;width:100px">Email</td><td>${order.email || '-'}</td></tr>
+          <tr><td style="padding:.3rem 0;color:#7A5A5A">Téléphone</td><td>${order.phone || '-'}</td></tr>
+          <tr><td style="padding:.3rem 0;color:#7A5A5A;vertical-align:top">Adresse</td><td>${order.address || '-'}</td></tr>
+        </table>
+        <div style="background:white;padding:1rem;margin-top:1rem;border-top:2px solid #C9A84C">
+          ${order.items.map(i => `<div style="display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid #F5ECEC;font-size:.9rem"><span>${i.name} × ${i.qty}</span><span>${(i.price * i.qty).toFixed(2)} €</span></div>`).join('')}
+        </div>
+        <p style="margin-top:1.5rem"><a href="https://saveflora.fr/?gestion=fleur2026" style="background:#B01C2E;color:white;padding:.7rem 1.3rem;text-decoration:none;font-size:.85rem">Voir dans l'admin →</a></p>
+      </div>
+    </div>
+  `;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -126,7 +148,7 @@ module.exports = async function handler(req, res) {
         console.error('Erreur décompte stock:', stockErr);
       }
 
-      // Envoi de l'email de confirmation
+      // Envoi de l'email de confirmation au client
       if (order.email) {
         try {
           const resend = new Resend(process.env.RESEND_API_KEY);
@@ -139,6 +161,19 @@ module.exports = async function handler(req, res) {
         } catch (emailErr) {
           console.error('Erreur envoi email confirmation:', emailErr);
         }
+      }
+
+      // Notification admin : nouvelle commande reçue
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: 'SAVEFLORA <commande@saveflora.fr>',
+          to: 'saveflora13@gmail.com',
+          subject: `🌹 Nouvelle commande — ${order.customer || 'Client'} — ${order.total.toFixed(2)} €`,
+          html: adminNotificationTemplate(order)
+        });
+      } catch (adminEmailErr) {
+        console.error('Erreur envoi email notification admin:', adminEmailErr);
       }
     } catch (err) {
       console.error('Erreur traitement webhook:', err);
