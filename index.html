@@ -275,8 +275,6 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 .checkout-summary-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:1rem; }
 .checkout-summary-item { display:flex; justify-content:space-between; font-size:.85rem; color:var(--text-soft); margin-bottom:.5rem; }
 .checkout-summary-total { display:flex; justify-content:space-between; font-size:1rem; color:var(--red); border-top:1px solid var(--mist); padding-top:.8rem; margin-top:.8rem; }
-.card-icons { display:flex; gap:.5rem; margin-bottom:1rem; }
-.card-icon { width:42px; height:28px; border:1px solid var(--mist); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:.6rem; font-weight:700; color:var(--text-soft); }
 .secure-badge { display:flex; align-items:center; gap:.5rem; font-size:.72rem; color:var(--text-soft); margin-top:1rem; }
 .modal-actions { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--mist); }
 .btn-back { background:none; border:1px solid var(--mist); padding:.8rem 1.8rem; font-family:'Jost',sans-serif; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; cursor:pointer; color:var(--text-soft); transition:border-color .3s; }
@@ -847,9 +845,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="modal-header"><div class="modal-title">Finaliser la commande</div><button class="modal-close" onclick="closeCheckout()">✕</button></div>
     <div class="modal-body">
       <div class="checkout-steps">
-        <div class="step active" id="step1tab">① Livraison</div>
-        <div class="step" id="step2tab">② Paiement</div>
-        <div class="step" id="step3tab">③ Confirmation</div>
+        <div class="step active" id="step1tab">① Vos informations</div>
+        <div class="step" id="step2tab">② Confirmation</div>
       </div>
       <div class="checkout-section active" id="step1">
         <div class="checkout-summary" id="checkoutSummary"></div>
@@ -869,24 +866,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span>J'ai lu et j'accepte les <a href="/cgv.html" target="_blank" style="color:var(--red);text-decoration:underline">conditions générales de vente</a> et la <a href="/confidentialite.html" target="_blank" style="color:var(--red);text-decoration:underline">politique de confidentialité</a>.</span>
         </label>
         <div class="auth-error" id="cgvError" style="display:none">Veuillez accepter les CGV pour continuer.</div>
-        <div class="modal-actions"><button class="btn-back" onclick="closeCheckout()">Annuler</button><button class="btn-next" onclick="goToStep(2)">Continuer →</button></div>
+        <div class="secure-badge" style="margin-top:1.2rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Paiement sécurisé via Stripe — vous serez redirigé(e) pour entrer votre carte</div>
+        <div class="modal-actions"><button class="btn-back" onclick="closeCheckout()">Annuler</button><button class="btn-next" id="payBtn" onclick="proceedToPayment()"><span id="payBtnLabel">Payer <span id="payAmount"></span> →</span></button></div>
       </div>
       <div class="checkout-section" id="step2">
-        <div class="card-icons">
-          <div class="card-icon" style="color:#1a1f71;font-size:.75rem;font-weight:900">VISA</div>
-          <div class="card-icon" style="display:flex"><div style="width:16px;height:16px;background:#eb001b;border-radius:50%"></div><div style="width:16px;height:16px;background:#f79e1b;border-radius:50%;margin-left:-6px"></div></div>
-          <div class="card-icon" style="color:#2557d6;font-weight:900;font-size:.6rem">CB</div>
-        </div>
-        <div class="form-row full"><div class="form-group"><label class="form-label">Numéro de carte</label><input class="form-input" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"></div></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Expiration</label><input class="form-input" id="cardExp" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)"></div>
-          <div class="form-group"><label class="form-label">CVV</label><input class="form-input" id="cardCvv" placeholder="123" maxlength="3" type="password"></div>
-        </div>
-        <div class="form-row full"><div class="form-group"><label class="form-label">Nom sur la carte</label><input class="form-input" id="cardName" placeholder="MARIE DUPONT"></div></div>
-        <div class="secure-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Paiement 100% sécurisé</div>
-        <div class="modal-actions"><button class="btn-back" onclick="goToStep(1)">← Retour</button><button class="btn-next" onclick="placeOrder()">Payer <span id="payAmount"></span> →</button></div>
-      </div>
-      <div class="checkout-section" id="step3">
         <div class="order-success">
           <div class="order-success-icon">🌹</div>
           <div class="order-success-title">Commande confirmée !</div>
@@ -1303,37 +1286,30 @@ function renderCheckoutSummary(){
   document.getElementById('payAmount').textContent=total+' €';
 }
 function showStep(n){
-  [1,2,3].forEach(i=>{
+  [1,2].forEach(i=>{
     document.getElementById('step'+i).classList.toggle('active',i===n);
     const t=document.getElementById('step'+i+'tab');
     t.classList.remove('active','done');
     if(i===n) t.classList.add('active'); else if(i<n) t.classList.add('done');
   });
 }
-function goToStep(n){
-  if(n===2){
-    const f=document.getElementById('firstName').value, l=document.getElementById('lastName').value,
-          e=document.getElementById('email').value, a=document.getElementById('address').value;
-    if(!f||!l||!e||!a){alert('Veuillez remplir tous les champs obligatoires.');return;}
-    const cgvErr=document.getElementById('cgvError');
-    if(!document.getElementById('acceptCGV').checked){
-      cgvErr.style.display='block';
-      return;
-    }
-    cgvErr.style.display='none';
+function proceedToPayment(){
+  const f=document.getElementById('firstName').value, l=document.getElementById('lastName').value,
+        e=document.getElementById('email').value, a=document.getElementById('address').value;
+  if(!f||!l||!e||!a){alert('Veuillez remplir tous les champs obligatoires.');return;}
+  const cgvErr=document.getElementById('cgvError');
+  if(!document.getElementById('acceptCGV').checked){
+    cgvErr.style.display='block';
+    return;
   }
-  showStep(n);
+  cgvErr.style.display='none';
+  placeOrder();
 }
-function formatCard(input){ let v=input.value.replace(/\D/g,'').substring(0,16); input.value=v.replace(/(.{4})/g,'$1 ').trim(); }
-function formatExp(input){ let v=input.value.replace(/\D/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2,4); input.value=v; }
 async function placeOrder(){
-  const num=document.getElementById('cardNum').value.replace(/\s/g,''),
-        exp=document.getElementById('cardExp').value,
-        cvv=document.getElementById('cardCvv').value,
-        name=document.getElementById('cardName').value;
-  if(num.length<16||!exp||cvv.length<3||!name){alert('Veuillez remplir tous les détails de paiement.');return;}
-  const btn=document.querySelector('#step2 .btn-next');
-  btn.textContent='Traitement...'; btn.disabled=true;
+  const btn=document.getElementById('payBtn');
+  const label=document.getElementById('payBtnLabel');
+  const originalLabel=label.innerHTML;
+  label.textContent='Traitement...'; btn.disabled=true;
   try{
     // Sauvegarder les infos pour l'email après retour Stripe
     const pendingOrder={
@@ -1358,7 +1334,7 @@ async function placeOrder(){
   }catch(err){
     console.error(err);
     alert('Erreur de paiement. Veuillez réessayer.');
-    btn.textContent='Payer →'; btn.disabled=false;
+    label.innerHTML=originalLabel; btn.disabled=false;
   }
 }
 function finishOrder(){ closeCheckout(); renderCartItems(); }
@@ -1877,9 +1853,9 @@ if(window.location.search.includes('success=true')){
   localStorage.removeItem('sf_pending_order');
   setTimeout(()=>{
     document.getElementById('checkoutModal').classList.add('open');
-    showStep(3);
+    showStep(2);
     if(pendingOrder && pendingOrder.customer){
-      const titleEl=document.querySelector('#step3 .order-success-title');
+      const titleEl=document.querySelector('#step2 .order-success-title');
       const firstName=pendingOrder.customer.split(' ')[0];
       if(titleEl) titleEl.textContent='Merci '+firstName+' ! Commande confirmée 🌹';
     }
