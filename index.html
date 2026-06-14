@@ -899,6 +899,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="auth-welcome-email" id="welcomeEmail"></div>
         </div>
         <div class="user-info-grid" id="userInfoGrid"></div>
+
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--mist)">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:1rem">📦 Mes commandes</div>
+          <div id="myOrdersPwdPrompt">
+            <p style="font-size:.82rem;color:var(--text-soft);margin-bottom:.8rem">Pour votre sécurité, confirmez votre mot de passe pour afficher votre historique de commandes.</p>
+            <div class="form-group"><input type="password" class="form-input" id="myOrdersPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')loadMyOrders()"></div>
+            <button class="btn-next" style="width:100%;margin-top:.5rem" onclick="loadMyOrders()">Afficher mes commandes</button>
+            <p id="myOrdersError" style="color:var(--red);font-size:.8rem;margin-top:.5rem;display:none">Mot de passe incorrect.</p>
+          </div>
+          <div id="myOrdersList" style="display:none"></div>
+        </div>
+
         <button class="btn-logout" onclick="logoutUser()">Se déconnecter</button>
       </div>
 
@@ -1403,11 +1415,51 @@ function showLoggedIn(){
     ${currentUser.address?`<div class="user-info-item"><div class="user-info-label">Adresse</div>${currentUser.address}</div>`:''}
     ${currentUser.zip||currentUser.city?`<div class="user-info-item"><div class="user-info-label">Ville</div>${currentUser.zip||''} ${currentUser.city||''}</div>`:''}
   `;
+  // Réinitialiser la section "Mes commandes" (redemande le mot de passe pour ce client)
+  document.getElementById('myOrdersPwdPrompt').style.display='block';
+  document.getElementById('myOrdersList').style.display='none';
+  document.getElementById('myOrdersList').innerHTML='';
+  document.getElementById('myOrdersPwd').value='';
+  document.getElementById('myOrdersError').style.display='none';
   updateNavUser();
 }
 function showLoggedOut(){
   document.getElementById('authLoggedIn').style.display='none';
   document.getElementById('authLoggedOut').style.display='block';
+}
+async function loadMyOrders(){
+  const pwd=document.getElementById('myOrdersPwd').value;
+  const errEl=document.getElementById('myOrdersError');
+  if(!pwd){ errEl.textContent='Veuillez entrer votre mot de passe.'; errEl.style.display='block'; return; }
+  errEl.style.display='none';
+  try{
+    const res=await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'get-orders',email:currentUser.email,pwd:pwd})});
+    const data=await res.json();
+    if(!res.ok || !data.success){
+      errEl.textContent='Mot de passe incorrect.';
+      errEl.style.display='block';
+      return;
+    }
+    const list=document.getElementById('myOrdersList');
+    if(!data.orders.length){
+      list.innerHTML='<p style="font-size:.85rem;color:var(--text-soft)">Aucune commande pour l\'instant. 🌹</p>';
+    } else {
+      list.innerHTML=data.orders.map(o=>`
+        <div style="border:1px solid var(--mist);padding:1rem;margin-bottom:.8rem">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-soft);margin-bottom:.5rem">
+            <span>${o.date}</span>
+            <span>${ORDER_STATUS_LABELS[o.status]||o.status}</span>
+          </div>
+          <div style="font-size:.88rem">${o.items.map(i=>`${i.name} × ${i.qty}`).join(', ')}</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--red);margin-top:.5rem">${o.total} €</div>
+        </div>`).join('');
+    }
+    document.getElementById('myOrdersPwdPrompt').style.display='none';
+    list.style.display='block';
+  }catch(e){
+    errEl.textContent='Erreur réseau, veuillez réessayer.';
+    errEl.style.display='block';
+  }
 }
 function switchAuthTab(tab){
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',['login','register'][i]===tab));
