@@ -566,7 +566,7 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     </div>
     <div class="product-card" onclick="openProductDetail(10)">
       <div class="product-image">
-        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>
+        <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>
         <span class="product-badge new">Nouveau</span>
         <div class="product-overlay"><button class="overlay-btn" onclick="event.stopPropagation();addToCart(10)">Ajouter au panier</button></div>
       </div>
@@ -1023,7 +1023,7 @@ const SVGS = {
   chocolat:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF8F0;width:100%;height:100%"><rect x="60" y="120" width="180" height="200" rx="10" fill="#5C3317"/><rect x="70" y="130" width="160" height="180" rx="8" fill="#7B4A2A"/><line x1="70" y1="190" x2="230" y2="190" stroke="#5C3317" stroke-width="3"/><line x1="70" y1="250" x2="230" y2="250" stroke="#5C3317" stroke-width="3"/><line x1="130" y1="130" x2="130" y2="310" stroke="#5C3317" stroke-width="3"/><line x1="180" y1="130" x2="180" y2="310" stroke="#5C3317" stroke-width="3"/><rect x="65" y="115" width="170" height="15" rx="5" fill="#C9A84C"/><circle cx="100" cy="160" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="155" cy="220" r="8" fill="#C9A84C" opacity="0.6"/><circle cx="200" cy="280" r="8" fill="#C9A84C" opacity="0.6"/></svg>`,
   carte:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFF5F5;width:100%;height:100%"><rect x="50" y="100" width="200" height="240" rx="8" fill="white" stroke="#E8CC80" stroke-width="3"/><rect x="50" y="100" width="200" height="80" rx="8" fill="#B01C2E"/><rect x="50" y="160" width="200" height="20" fill="#B01C2E"/><circle cx="150" cy="138" r="18" fill="#E8CC80" opacity="0.9"/><circle cx="150" cy="138" r="10" fill="#C9A84C"/><line x1="75" y1="215" x2="225" y2="215" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="235" x2="225" y2="235" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="255" x2="180" y2="255" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="275" x2="200" y2="275" stroke="#F5ECEC" stroke-width="2"/><line x1="75" y1="295" x2="160" y2="295" stroke="#F5ECEC" stroke-width="2"/></svg>`,
   coffret:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#1A1010;width:100%;height:100%"><rect x="60" y="200" width="180" height="130" rx="6" fill="#2A2020"/><rect x="60" y="200" width="180" height="130" rx="6" fill="none" stroke="#C9A84C" stroke-width="2"/><rect x="55" y="180" width="190" height="30" rx="4" fill="#C9A84C"/><rect x="55" y="180" width="190" height="30" rx="4" fill="none" stroke="#E8CC80" stroke-width="1"/><rect x="140" y="140" width="20" height="70" rx="3" fill="#C9A84C"/><ellipse cx="150" cy="138" rx="30" ry="18" fill="#B01C2E"/><ellipse cx="150" cy="138" rx="20" ry="12" fill="#D94050"/><circle cx="150" cy="138" r="8" fill="#C9A84C"/><circle cx="100" cy="240" r="20" fill="#C9A84C" opacity="0.3"/><circle cx="100" cy="240" r="12" fill="#E8CC80" opacity="0.5"/><circle cx="100" cy="240" r="6" fill="#C9A84C"/><rect x="120" y="228" width="80" height="8" rx="2" fill="#C9A84C" opacity="0.4"/><rect x="120" y="244" width="60" height="6" rx="2" fill="#C9A84C" opacity="0.25"/><rect x="120" y="258" width="70" height="6" rx="2" fill="#C9A84C" opacity="0.25"/></svg>`,
-  bougie:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="0 0 8 8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>`
+  bougie:`<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" style="background:#FFFAF0;width:100%;height:100%"><rect x="110" y="200" width="80" height="160" rx="8" fill="#FAF0E0"/><rect x="110" y="200" width="80" height="160" rx="8" fill="none" stroke="#E8CC80" stroke-width="2"/><rect x="110" y="320" width="80" height="40" rx="8" fill="#E8CC80" opacity="0.5"/><line x1="150" y1="200" x2="150" y2="165" stroke="#8B6914" stroke-width="3"/><ellipse cx="150" cy="155" rx="12" ry="18" fill="#FF6B00" opacity="0.9"/><ellipse cx="150" cy="150" rx="6" ry="12" fill="#FFCC00"/><ellipse cx="150" cy="148" rx="3" ry="6" fill="white" opacity="0.8"/><ellipse cx="150" cy="362" rx="45" ry="8" fill="#E8CC80" opacity="0.4"/></svg>`
 };
 
 const DEFAULT_PRODUCTS=[
@@ -1541,8 +1541,19 @@ function switchAdminTab(tab){
   if(tab==='newsletter') loadNewsletterFromDB().then(renderAdminNewsletter);
 }
 function makeAdminRow(p){
+  let imgStatus='';
+  if(p.img){
+    if(p.img.startsWith('data:')){
+      imgStatus='<span style="font-size:.62rem;color:#E89B7E;background:rgba(193,98,59,.15);padding:.15rem .5rem;border-radius:2px;display:inline-block;margin-top:.3rem">⚠ Ancien format (local)</span>';
+    } else {
+      imgStatus='<span style="font-size:.62rem;color:#A8D8A8;background:rgba(110,180,110,.15);padding:.15rem .5rem;border-radius:2px;display:inline-block;margin-top:.3rem">✅ Stockage Blob</span>';
+    }
+  }
   return `<div class="admin-product-row" id="adminRow${p.id}">
-    <div class="admin-product-thumb" id="adminThumb${p.id}">${getProductImage(p)}</div>
+    <div>
+      <div class="admin-product-thumb" id="adminThumb${p.id}">${getProductImage(p)}</div>
+      ${imgStatus}
+    </div>
     <div class="admin-product-info">
       <input class="admin-product-name-input" id="aName${p.id}" value="${p.name}" placeholder="Nom">
       <input class="admin-product-desc-input" id="aDesc${p.id}" value="${p.desc}" placeholder="Description courte (carte produit)">
