@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<!-- Google Consent Mode (par défaut : tout refusé tant que l'utilisateur n'a pas répondu au bandeau cookies) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  'analytics_storage': 'denied',
+  'ad_storage': 'denied',
+  'ad_user_data': 'denied',
+  'ad_personalization': 'denied'
+});
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T5QZVGJ8');</script>
+<!-- End Google Tag Manager -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -114,6 +132,11 @@ nav.scrolled .nav-user-btn { color:var(--text-soft); }
 .hero-scroll { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:.5rem; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; color:rgba(255,255,255,.35); animation:bounce 2s ease-in-out infinite; }
 .hero-scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,rgba(255,255,255,.35),transparent); }
 @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)} }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
 
 /* BANNER */
 .banner { background:var(--gold); padding:.9rem; text-align:center; font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); }
@@ -334,6 +357,15 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
 .admin-user-row { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); padding:1rem; display:flex; justify-content:space-between; align-items:center; }
 .admin-user-info { font-size:.82rem; color:rgba(255,255,255,.7); line-height:1.6; }
 
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:700;background:var(--ink);color:rgba(255,255,255,.85);padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;box-shadow:0 -4px 20px rgba(0,0,0,.2)}
+.cookie-banner p{font-size:.82rem;line-height:1.6;margin:0}
+.cookie-banner a{color:var(--gold-light);text-decoration:underline}
+.cookie-actions{display:flex;gap:.8rem;flex-shrink:0}
+.cookie-btn{font-family:'Jost',sans-serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:.7rem 1.4rem;cursor:pointer;border:none;font-weight:500;transition:opacity .2s}
+.cookie-btn:hover{opacity:.85}
+.cookie-btn.accept{background:var(--gold);color:var(--ink)}
+.cookie-btn.refuse{background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85)}
+
 @media(max-width:1024px){
   nav{padding:1.2rem 2rem}nav.scrolled{padding:.8rem 2rem}
   .collections{padding:5rem 2rem}
@@ -365,11 +397,18 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
   .admin-settings-grid{grid-template-columns:1fr}
   .user-info-grid{grid-template-columns:1fr}
   #productDetailContent{grid-template-columns:1fr !important}
+  .cookie-banner{flex-direction:column;align-items:stretch;gap:1rem;padding:1.2rem}
+  .cookie-actions{justify-content:stretch}
+  .cookie-actions button{flex:1}
   #livraison [style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr !important}
 }
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5QZVGJ8"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <!-- NAV -->
 <nav id="navbar">
@@ -759,6 +798,15 @@ footer { background:var(--ink); color:rgba(255,255,255,.45); padding:4rem 4rem 2
     <span>© 2026 SAVEFLORA. Tous droits réservés. · Marseille, France</span>
   </div>
 </footer>
+
+<!-- BANDEAU COOKIES -->
+<div class="cookie-banner" id="cookieBanner" style="display:none">
+  <p>Ce site utilise des cookies pour analyser le trafic et améliorer votre expérience. Consultez notre <a href="/confidentialite.html" target="_blank">politique de confidentialité</a>.</p>
+  <div class="cookie-actions">
+    <button class="cookie-btn refuse" onclick="refuseCookies()">Refuser</button>
+    <button class="cookie-btn accept" onclick="acceptCookies()">Accepter</button>
+  </div>
+</div>
 
 <!-- WHATSAPP -->
 <a href="https://wa.me/33676698909" target="_blank" rel="noopener" class="whatsapp-float">
@@ -1749,6 +1797,26 @@ const revealObserver=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealObserver.unobserve(e.target);}});
 },{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+// COOKIES / CONSENTEMENT
+function gtagConsent(){ window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag; return gtag; }
+function acceptCookies(){
+  localStorage.setItem('sf_cookie_consent','accepted');
+  gtagConsent()('consent','update',{'analytics_storage':'granted','ad_storage':'granted','ad_user_data':'granted','ad_personalization':'granted'});
+  document.getElementById('cookieBanner').style.display='none';
+}
+function refuseCookies(){
+  localStorage.setItem('sf_cookie_consent','refused');
+  document.getElementById('cookieBanner').style.display='none';
+}
+(function(){
+  const consent=localStorage.getItem('sf_cookie_consent');
+  if(consent==='accepted'){
+    gtagConsent()('consent','update',{'analytics_storage':'granted','ad_storage':'granted','ad_user_data':'granted','ad_personalization':'granted'});
+  } else if(!consent){
+    document.getElementById('cookieBanner').style.display='flex';
+  }
+})();
+
 renderProducts(); renderCartItems(); updateNavUser();
 
 // Accès admin via URL secrète : saveflora.fr/?gestion=fleur2026
