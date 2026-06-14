@@ -1,10 +1,22 @@
 const { kv } = require('@vercel/kv');
-const { checkRateLimit, getClientIp, validateBodySize, setSecurityHeaders } = require('./security');
+
+const rateLimitStore = new Map();
+function checkRateLimit(key, max, windowMs) {
+  windowMs = windowMs || 60000;
+  const now = Date.now();
+  if (!rateLimitStore.has(key)) { rateLimitStore.set(key, { count: 1, resetAt: now + windowMs }); return true; }
+  const entry = rateLimitStore.get(key);
+  if (now > entry.resetAt) { rateLimitStore.set(key, { count: 1, resetAt: now + windowMs }); return true; }
+  entry.count++;
+  return entry.count <= max;
+}
+function getClientIp(req) {
+  return (req.headers['x-forwarded-for']||'').split(',')[0].trim() || 'unknown';
+}
 
 module.exports = async function handler(req, res) {
-  setSecurityHeaders(res);
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   const ip = getClientIp(req);
-
   try {
     if (req.method === 'GET') {
       if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) {
@@ -13,17 +25,11 @@ module.exports = async function handler(req, res) {
       const list = await kv.get('newsletter') || [];
       return res.status(200).json(list);
     }
-
     if (req.method === 'POST') {
-      // Rate limit strict : max 3 inscriptions par IP par minute
-      if (!checkRateLimit(ip + ':newsletter', 3)) {
+      if (!checkRateLimit(ip+':newsletter', 5)) {
         return res.status(429).json({ error: 'Trop de requêtes.' });
       }
-      if (!validateBodySize(req.body, 5)) {
-        return res.status(413).json({ error: 'Données invalides.' });
-      }
-      const { email } = req.body;
-      // Validation email stricte
+      const { email } = req.body || {};
       if (!email || typeof email !== 'string' || email.length > 254 ||
           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({ error: 'Email invalide.' });
@@ -32,7 +38,6 @@ module.exports = async function handler(req, res) {
       if (list.find(s => s.email.toLowerCase() === email.toLowerCase())) {
         return res.status(200).json({ success: true, alreadySubscribed: true });
       }
-      // Limite de 10 000 inscrits max
       if (list.length >= 10000) {
         return res.status(200).json({ success: true });
       }
@@ -40,7 +45,6 @@ module.exports = async function handler(req, res) {
       await kv.set('newsletter', list);
       return res.status(200).json({ success: true });
     }
-
     res.status(405).end();
   } catch(err) {
     console.error(err);
