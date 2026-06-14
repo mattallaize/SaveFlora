@@ -96,7 +96,8 @@ module.exports = async function handler(req, res) {
         phone: meta.phone || '',
         address: meta.address || '',
         items,
-        total: (session.amount_total / 100)
+        total: (session.amount_total / 100),
+        status: 'pending'
       };
 
       orders.unshift(order);
