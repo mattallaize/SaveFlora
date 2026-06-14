@@ -1042,6 +1042,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <button onclick="saveSettings()" style="background:var(--gold);color:var(--ink);border:none;padding:.9rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:1.5rem">💾 Sauvegarder</button>
           <div class="admin-success-msg" id="settingsSaveMsg" style="margin-top:1rem">✓ Paramètres sauvegardés !</div>
+
+          <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.1)">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white;margin-bottom:.8rem">📥 Sauvegarde des données</div>
+            <p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:1.2rem">
+              Télécharge une copie complète (produits, commandes, clients, newsletter) au format JSON, à conserver sur ton ordinateur. Recommandé une fois par mois, ou avant toute modification importante.
+            </p>
+            <button onclick="exportAllData()" id="exportBtn" style="background:none;border:1px solid var(--gold);color:var(--gold);padding:.9rem 2rem;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:500">📥 Exporter toutes les données</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1802,6 +1810,39 @@ function saveSettings(){
   document.getElementById('bannerText').textContent=document.getElementById('settingBanner').value;
   const msg=document.getElementById('settingsSaveMsg'); msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
+}
+async function exportAllData(){
+  const btn=document.getElementById('exportBtn');
+  const original=btn.textContent;
+  btn.textContent='Préparation...'; btn.disabled=true;
+  const headers={'x-admin-key':sessionStorage.getItem('sf_admin_key')||''};
+  try{
+    const [productsRes,ordersRes,usersRes,newsletterRes]=await Promise.all([
+      fetch('/api/products'),
+      fetch('/api/orders',{headers}),
+      fetch('/api/users',{headers}),
+      fetch('/api/newsletter',{headers})
+    ]);
+    const backup={
+      exportDate:new Date().toLocaleString('fr-FR'),
+      products: productsRes.ok ? await productsRes.json() : [],
+      orders: ordersRes.ok ? await ordersRes.json() : [],
+      users: usersRes.ok ? await usersRes.json() : [],
+      newsletter: newsletterRes.ok ? await newsletterRes.json() : []
+    };
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`saveflora-backup-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){
+    alert("Erreur lors de l'export. Vérifie ta connexion et réessaie.");
+  }
+  btn.textContent=original; btn.disabled=false;
 }
 async function subscribeNewsletter(){
   const input=document.getElementById('newsletterEmail');
