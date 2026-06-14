@@ -1,88 +1,44 @@
-// ═══════════════════════════════════════════════════════
-// MIDDLEWARE DE SÉCURITÉ — saveflora.fr
-// Utilisé par toutes les fonctions API
-// ═══════════════════════════════════════════════════════
+const { kv } = require('@vercel/kv');
 
-// Rate limiting en mémoire (par IP, reset toutes les 60s)
 const rateLimitStore = new Map();
-
-/**
- * Vérifie le rate limit pour une IP donnée
- * @param {string} ip - L'IP du client
- * @param {number} maxRequests - Nombre max de requêtes autorisées
- * @param {number} windowMs - Fenêtre de temps en ms (défaut: 60s)
- * @returns {boolean} true si OK, false si bloqué
- */
-function checkRateLimit(ip, maxRequests = 30, windowMs = 60000) {
+function checkRateLimit(key, max, windowMs) {
+  windowMs = windowMs || 60000;
   const now = Date.now();
-  const key = ip;
-
-  if (!rateLimitStore.has(key)) {
-    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
-    return true;
-  }
-
+  if (!rateLimitStore.has(key)) { rateLimitStore.set(key, { count: 1, resetAt: now + windowMs }); return true; }
   const entry = rateLimitStore.get(key);
-
-  // Reset si la fenêtre est expirée
-  if (now > entry.resetAt) {
-    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
-    return true;
-  }
-
-  // Incrémenter le compteur
+  if (now > entry.resetAt) { rateLimitStore.set(key, { count: 1, resetAt: now + windowMs }); return true; }
   entry.count++;
-  if (entry.count > maxRequests) {
-    return false; // Bloqué
-  }
-
-  return true;
+  return entry.count <= max;
 }
-
-/**
- * Nettoyage périodique du store (évite les fuites mémoire)
- */
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetAt) rateLimitStore.delete(key);
-  }
-}, 5 * 60 * 1000); // Nettoyage toutes les 5 minutes
-
-/**
- * Récupère l'IP réelle du client (Vercel forwarde via x-forwarded-for)
- */
 function getClientIp(req) {
-  return (
-    req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-    req.socket?.remoteAddress ||
-    'unknown'
-  );
+  return (req.headers['x-forwarded-for']||'').split(',')[0].trim() || 'unknown';
 }
 
-/**
- * Valide la taille et le format du body
- * @param {object} body - Le body de la requête
- * @param {number} maxSizeKb - Taille max en Ko (défaut: 500Ko)
- * @returns {boolean}
- */
-function validateBodySize(body, maxSizeKb = 500) {
+module.exports = async function handler(req, res) {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  const ip = getClientIp(req);
   try {
-    const size = Buffer.byteLength(JSON.stringify(body), 'utf8');
-    return size <= maxSizeKb * 1024;
-  } catch {
-    return false;
+    if (req.method === 'GET') {
+      if (!checkRateLimit(ip+':products:get', 60)) {
+        return res.status(429).json({ error: 'Trop de requêtes.' });
+      }
+      const products = await kv.get('products') || [];
+      return res.status(200).json(products);
+    }
+    if (req.method === 'POST') {
+      if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: 'unauthorized' });
+      }
+      const products = req.body;
+      if (!Array.isArray(products)) {
+        return res.status(400).json({ error: 'Format invalide.' });
+      }
+      await kv.set('products', products);
+      return res.status(200).json({ success: true });
+    }
+    res.status(405).end();
+  } catch(err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur serveur.' });
   }
 }
-
-/**
- * Headers de sécurité standards à ajouter à chaque réponse
- */
-function setSecurityHeaders(res) {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-}
-
-module.exports = { checkRateLimit, getClientIp, validateBodySize, setSecurityHeaders };
