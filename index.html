@@ -1120,11 +1120,6 @@ async function loadOrdersFromDB(){
     if(Array.isArray(data)) orders=data;
   }catch(e){ console.log('DB orders load error:',e); }
 }
-async function saveOrderToDB(order){
-  try{
-    await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
-  }catch(e){ console.log('DB order save error:',e); }
-}
 async function loadUsersFromDB(){
   try{
     const res=await fetch('/api/users',{headers:{'x-admin-key':sessionStorage.getItem('sf_admin_key')||''}});
@@ -1345,7 +1340,13 @@ async function placeOrder(){
       total:cart.reduce((s,x)=>s+x.price*x.qty,0)
     };
     localStorage.setItem('sf_pending_order',JSON.stringify(pendingOrder));
-    const response=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:cart})});
+    const response=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      items:cart,
+      customer:pendingOrder.customer,
+      email:pendingOrder.email,
+      phone:pendingOrder.phone,
+      address:pendingOrder.address
+    })});
     const data=await response.json();
     if(data.url){ window.location.href=data.url; }
     else throw new Error('no url');
@@ -1836,26 +1837,21 @@ if(__urlParams.get('reset') && __urlParams.get('email')){
 loadProductsFromDB().then(()=>{ renderProducts(); });
 
 // Vérifier si retour de Stripe
+// La commande est enregistrée et l'email de confirmation envoyé automatiquement
+// côté serveur par le webhook Stripe (api/stripe-webhook.js), une fois le paiement
+// vérifié — on se contente ici d'afficher l'écran de confirmation au client.
 if(window.location.search.includes('success=true')){
   cart=[]; updateCartBadge(); renderCartItems();
-  // Envoyer email de confirmation
   const pendingOrder=JSON.parse(localStorage.getItem('sf_pending_order')||'null');
-  if(pendingOrder){
-    // Sauvegarder commande dans admin (DB + cache local)
-    const order={id:'SF'+Date.now(),date:new Date().toLocaleString('fr-FR'),...pendingOrder};
-    orders.unshift(order); localStorage.setItem('sf_orders',JSON.stringify(orders));
-    saveOrderToDB(order);
-    // Envoyer email
-    fetch('/api/send-confirmation',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(pendingOrder)
-    }).catch(e=>console.log('Email error:',e));
-    localStorage.removeItem('sf_pending_order');
-  }
+  localStorage.removeItem('sf_pending_order');
   setTimeout(()=>{
     document.getElementById('checkoutModal').classList.add('open');
     showStep(3);
+    if(pendingOrder && pendingOrder.customer){
+      const titleEl=document.querySelector('#step3 .order-success-title');
+      const firstName=pendingOrder.customer.split(' ')[0];
+      if(titleEl) titleEl.textContent='Merci '+firstName+' ! Commande confirmée 🌹';
+    }
   },500);
 }
 </script>
