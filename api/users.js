@@ -6,6 +6,15 @@ function hashPassword(password, salt) {
   return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
 }
 
+function verifyPassword(user, pwd) {
+  if (user.hash && user.salt) {
+    return hashPassword(pwd, user.salt) === user.hash;
+  } else if (user.pwd) {
+    return user.pwd === pwd;
+  }
+  return false;
+}
+
 module.exports = async function handler(req, res) {
   try {
     if (req.method === 'GET') {
@@ -56,6 +65,21 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({ success: true, user: safeUser });
       }
 
+      // Récupération de l'historique de commandes d'un client.
+      // On revérifie email+mot de passe (pas de jeton de session existant)
+      // pour éviter qu'un email connu suffise à consulter les commandes de quelqu'un d'autre.
+      if (body.action === 'get-orders') {
+        const user = users.find(u => u.email === body.email);
+        if (!user || !verifyPassword(user, body.pwd)) {
+          return res.status(401).json({ error: 'invalid' });
+        }
+        const orders = await kv.get('orders') || [];
+        const myOrders = orders
+          .filter(o => o.email && o.email.toLowerCase() === body.email.toLowerCase())
+          .map(o => ({ id: o.id, date: o.date, items: o.items, total: o.total, status: o.status || 'pending' }));
+        return res.status(200).json({ success: true, orders: myOrders });
+      }
+
       if (body.action === 'forgot-password') {
         const user = users.find(u => u.email === body.email);
         // Toujours répondre "success" même si l'email n'existe pas (sécurité : ne pas révéler les comptes existants)
@@ -90,7 +114,7 @@ module.exports = async function handler(req, res) {
                   <p style="font-size:.85rem;color:#7A5A5A">Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email — votre mot de passe ne sera pas modifié.</p>
                 </div>
                 <div style="background:#1a1010;padding:1rem;text-align:center">
-                  <p style="color:rgba(255,255,255,.4);font-size:.75rem;margin:0">© 2024 SAVEFLORA · Marseille</p>
+                  <p style="color:rgba(255,255,255,.4);font-size:.75rem;margin:0">© 2026 SAVEFLORA · Marseille</p>
                 </div>
               </div>
             `
