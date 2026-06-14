@@ -1700,6 +1700,17 @@ function saveProduct(id){
   p.badge=p.badgeText.toLowerCase().includes('nouveau')?'new':(p.badgeText?'sold':'');
   try{ localStorage.setItem('sf_products',JSON.stringify(products)); }catch(e){ console.log('Cache local plein, on continue sans (la base de données reste à jour)'); }
   renderProducts();
+  const btn=document.querySelector(`#adminRow${id} .admin-save-row`);
+  if(btn){
+    const original=btn.textContent;
+    btn.textContent='Enregistrement...'; btn.disabled=true;
+    syncProductsToDB().then(()=>{
+      btn.textContent='✅ Sauvegardé'; 
+      setTimeout(()=>{ btn.textContent=original; btn.disabled=false; },1500);
+    });
+  } else {
+    syncProductsToDB();
+  }
 }
 function adminSaveAll(){
   products.forEach(p=>saveProduct(p.id));
