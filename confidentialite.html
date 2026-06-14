@@ -32,6 +32,8 @@ th{color:var(--ink);font-weight:500}
 .notice{background:var(--cream);border-left:3px solid var(--gold);padding:1rem 1.5rem;margin:1.5rem 0;font-size:.85rem}
 a{color:var(--red)}
 footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;padding:2rem;font-size:.75rem}
+.cookie-pref-btn{background:var(--red);color:var(--white);border:none;padding:.9rem 1.8rem;font-family:'Jost',sans-serif;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-top:1rem;transition:background .3s}
+.cookie-pref-btn:hover{background:var(--red-deep)}
 @media(max-width:768px){header,main{padding-left:1.5rem;padding-right:1.5rem}table{font-size:.78rem}}
 </style>
 </head>
@@ -64,12 +66,13 @@ footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;paddin
     <tr><td>Adresse postale</td><td>Commande / Compte</td><td>Livraison</td></tr>
     <tr><td>Mot de passe</td><td>Création de compte</td><td>Sécurisation de l'accès (chiffré, jamais stocké en clair)</td></tr>
     <tr><td>Données de paiement</td><td>Paiement</td><td>Traitées exclusivement par Stripe — jamais stockées par SAVEFLORA</td></tr>
+    <tr><td>Données de navigation</td><td>Visite du site (si cookies acceptés)</td><td>Statistiques d'audience (Google Analytics)</td></tr>
   </table>
 
   <h2>Base légale et finalités</h2>
   <ul>
     <li><strong>Exécution du contrat</strong> : traitement des commandes, livraison, service après-vente.</li>
-    <li><strong>Consentement</strong> : inscription à la newsletter (désinscription possible à tout moment).</li>
+    <li><strong>Consentement</strong> : inscription à la newsletter (désinscription possible à tout moment) ; cookies de mesure d'audience (voir section Cookies).</li>
     <li><strong>Intérêt légitime</strong> : prévention de la fraude, amélioration du site.</li>
   </ul>
 
@@ -78,13 +81,19 @@ footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;paddin
   <ul>
     <li><strong>Stripe</strong> (paiement par carte bancaire) — <a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com/fr/privacy</a></li>
     <li><strong>Resend</strong> (envoi des emails de confirmation de commande)</li>
-    <li><strong>Vercel / Upstash</strong> (hébergement du site et de la base de données, région Europe)</li>
+    <li><strong>Vercel / Upstash</strong> (hébergement du site, de la base de données et des images, région Europe)</li>
+    <li><strong>Google</strong> (Google Analytics / Google Tag Manager, statistiques d'audience anonymisées — uniquement si vous acceptez les cookies) — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></li>
   </ul>
   <p>Aucune donnée n'est vendue ou cédée à des tiers à des fins commerciales.</p>
 
+  <h2>Transferts de données hors Union Européenne</h2>
+  <p>
+    Dans le cadre de l'utilisation de Google Analytics (uniquement si vous acceptez les cookies de mesure d'audience), certaines données de navigation anonymisées peuvent être transférées vers les États-Unis. Google s'engage à respecter les clauses contractuelles types approuvées par la Commission européenne, encadrant ces transferts. Pour en savoir plus : <a href="https://business.safety.google/adsprocessorterms/" target="_blank" rel="noopener">business.safety.google/adsprocessorterms</a>.
+  </p>
+
   <h2>Durée de conservation</h2>
   <p>
-    Les données liées à votre compte sont conservées tant que celui-ci est actif. Les données de commande sont conservées pour la durée nécessaire au traitement de la commande et au respect des obligations comptables et légales.
+    Les données liées à votre compte sont conservées tant que celui-ci est actif. Les données de commande sont conservées pour la durée nécessaire au traitement de la commande et au respect des obligations comptables et légales. Les données de mesure d'audience (Google Analytics) sont conservées 14 mois maximum.
   </p>
 
   <h2>Sécurité</h2>
@@ -94,8 +103,16 @@ footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;paddin
 
   <h2>Cookies</h2>
   <p>
-    Le site saveflora.fr n'utilise pas de cookies publicitaires ou de traceurs tiers. Seules les informations strictement nécessaires au fonctionnement (panier, session de connexion) sont stockées localement dans votre navigateur.
+    Le site saveflora.fr utilise deux types de cookies / stockages locaux :
   </p>
+  <ul>
+    <li><strong>Cookies strictement nécessaires</strong> (toujours actifs) : panier d'achat, session de connexion, préférences d'affichage. Ces informations sont stockées localement dans votre navigateur et ne sont jamais transmises à des tiers.</li>
+    <li><strong>Cookies de mesure d'audience</strong> (Google Analytics, via Google Tag Manager) : déposés uniquement si vous cliquez sur <strong>« Accepter »</strong> dans le bandeau affiché lors de votre première visite. Ils permettent de mesurer la fréquentation du site (nombre de visiteurs, pages consultées, provenance) de façon agrégée.</li>
+  </ul>
+  <p>
+    Vous pouvez à tout moment modifier votre choix concernant les cookies de mesure d'audience :
+  </p>
+  <button class="cookie-pref-btn" onclick="localStorage.removeItem('sf_cookie_consent'); alert('Préférences réinitialisées. Le bandeau de consentement s\'affichera à nouveau sur la page d\'accueil.'); window.location.href='/';">Gérer mes préférences cookies</button>
 
   <h2>Vos droits</h2>
   <p>Conformément au RGPD, vous disposez des droits suivants concernant vos données personnelles :</p>
