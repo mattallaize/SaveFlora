@@ -1016,6 +1016,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <div class="admin-section" id="adminOrders">
           <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:white;margin-bottom:1.5rem">Commandes reçues</div>
+          <div style="display:flex;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap">
+            <input id="orderSearchInput" placeholder="🔍 Rechercher (nom, email, n° commande...)" oninput="renderAdminOrders()" style="flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:white;padding:.6rem 1rem;font-family:'Jost',sans-serif;font-size:.85rem">
+            <select id="orderStatusFilter" onchange="renderAdminOrders()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:white;padding:.6rem 1rem;font-family:'Jost',sans-serif;font-size:.85rem">
+              <option value="">Tous les statuts</option>
+              <option value="pending">⏳ En attente</option>
+              <option value="preparing">🌸 En préparation</option>
+              <option value="delivered">✅ Livrée</option>
+            </select>
+          </div>
           <div class="admin-orders-list" id="adminOrdersList"></div>
         </div>
         <div class="admin-section" id="adminUsers">
@@ -1762,7 +1771,28 @@ const ORDER_STATUS_LABELS={pending:'⏳ En attente',preparing:'🌸 En préparat
 function renderAdminOrders(){
   const list=document.getElementById('adminOrdersList');
   if(!orders.length){list.innerHTML='<div class="admin-no-orders">Aucune commande pour l\'instant.</div>';return;}
-  list.innerHTML=orders.map(o=>{
+
+  const searchEl=document.getElementById('orderSearchInput');
+  const statusEl=document.getElementById('orderStatusFilter');
+  const search=(searchEl?searchEl.value:'').trim().toLowerCase();
+  const statusFilter=statusEl?statusEl.value:'';
+
+  let filtered=orders.filter(o=>{
+    const status=o.status||'pending';
+    if(statusFilter && status!==statusFilter) return false;
+    if(search){
+      const haystack=`${o.customer||''} ${o.email||''} ${o.id||''} ${o.phone||''}`.toLowerCase();
+      if(!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+
+  if(!filtered.length){
+    list.innerHTML='<div class="admin-no-orders">Aucune commande ne correspond à cette recherche.</div>';
+    return;
+  }
+
+  list.innerHTML=filtered.map(o=>{
     const status=o.status||'pending';
     return `
     <div class="admin-order">
