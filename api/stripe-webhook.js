@@ -104,6 +104,28 @@ module.exports = async function handler(req, res) {
       if (orders.length > 500) orders = orders.slice(0, 500);
       await kv.set('orders', orders);
 
+      // Décompte automatique du stock pour les produits suivis
+      try {
+        let cartItems = [];
+        if (meta.cart_items) {
+          try { cartItems = JSON.parse(meta.cart_items); } catch (e) { cartItems = []; }
+        }
+        if (Array.isArray(cartItems) && cartItems.length) {
+          const allProducts = await kv.get('products') || [];
+          let changed = false;
+          for (const ci of cartItems) {
+            const product = allProducts.find(p => p.id === ci.id);
+            if (product && product.stock != null) {
+              product.stock = Math.max(0, product.stock - (ci.qty || 0));
+              changed = true;
+            }
+          }
+          if (changed) await kv.set('products', allProducts);
+        }
+      } catch (stockErr) {
+        console.error('Erreur décompte stock:', stockErr);
+      }
+
       // Envoi de l'email de confirmation
       if (order.email) {
         try {
